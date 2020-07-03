@@ -8,6 +8,10 @@
     opacity: 1;
 }
 
+.item_product{
+  cursor: pointer;
+}
+
 
 
 .logo{

@@ -89,17 +89,24 @@ function Click_modificar(ref_id){
                 const descripcion=doc.data().descripcion
                 const dia=doc.data().dia
                 const estado=doc.data().estado
+                const semana_array=['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo']
+                var i;
+                for (i = 0; i < dia.length; i++) {
+                   if (dia[i]=== true){
+                        console.log(semana_array[i])
+                        $(`#${semana_array[i]}`).prop('checked', true);
+                   }
+                }
 
-                console.log(nombrePlato)
-                console.log(categoria)
-                console.log(descripcion)
                 $('#modificar-nombrePlato').val(nombrePlato)
                 $('#modificar-categoria').val(categoria)
                 $('#modificar-descripcion').val(descripcion)
-                $("#Lunes").prop('checked', true);  // Checks the box
+                // Checks the box
                 $('#modal-modificar-producto').modal();
 
             });
+
+            
        
 }
 
@@ -241,7 +248,7 @@ function MostrarMenuActual(){
 
 
         $(".menu-item-body").append(`
-        <tr id="${doc.id}" onClick="Click_modificar(this.id)">
+        <tr id="${doc.id}" onClick="Click_modificar(this.id)" class="item_product"> 
             <td>${categoria}</td>
             <td>${nombrePlato}</td>
             <td>${descripcion}</td>
