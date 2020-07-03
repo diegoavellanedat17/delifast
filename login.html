@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>DeliFast Login For Restaurants</title>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="./css/login.css">
+  
+</head>
+<body>
+
+<h1 class="titulo-cabecera">Ingresa las creedenciales de tu Restaurante</h1>
+
+<div class="login-page">
+  <div class="form">
+    <!-- <div class="logo-row"><img src="./login/images/zaboo_logo.svg" class="logo" /></div> -->
+
+    <form class="register-form" name="form-register" >
+      <input type="text" placeholder="Nombre del restaurante" name="name" />
+      <input type="text" placeholder="Nit" name="nit" />
+      <input type="text" placeholder="Persona a Cargo" name="persona" />
+      <input type="tel" placeholder="Telefono" name="telefono" />
+      <input type="password" placeholder="Contraseña" name="password" />
+      <input type="email" placeholder="Email" name="email"/>
+      <button type="submit">create</button>
+      <p class="message signin">Already registered? <a href="#">Sign In</a></p>
+    </form>
+
+    <form class="login-form" name="form-auth">
+      <input type="email" placeholder="username" name="username"/>
+      <input type="password" placeholder="password" name="password"/>
+      <button type="submit">login</button>
+      <p class="message register">Not registered? <a href="#">Create an account</a></p>
+      <p class="message forgot">Forgot password? <a href="#">Click Here </a></p>
+    </form>
+
+    <form class="forgot-form" name="form-forgot">
+      <input type="email" placeholder="email" name="email-address"/>
+      <button type="submit">Send Email</button>
+      <p class="message register">Not registered? <a href="#">Create an account</a></p>
+    </form>
+
+
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+<script src="./js/login.js"></script>
+	<script> 
+  // 		$(".message a").click(function(){
+  //  		$("form").animate({height: "toggle", opacity: "toggle"}, "slow");
+  // });
+
+
+  $(".register a").click(function(){
+
+
+    $("form").animate({height: "toggle", opacity: "toggle"}, "slow");
+    
+    $(".login-form").css("display","none")
+    $(".forgot-form").css("display","none")
+    $(".register-form").css("display","block")
+    $(".titulo-cabecera").empty()
+    $(".titulo-cabecera").append("Registra tu restaurante")
+
+  });
+
+  $(".signin a").click(function(){
+    $("form").animate({height: "toggle", opacity: "toggle"}, "slow");
+   
+    $(".login-form").css("display","block")
+    $(".forgot-form").css("display","none")
+    $(".register-form").css("display","none")
+    $(".titulo-cabecera").empty()
+    $(".titulo-cabecera").append("Ingresa las creedenciales de tu Restaurante")
+
+  });
+
+  $(".forgot a").click(function(){
+    $("form").animate({height: "toggle", opacity: "toggle"}, "slow");
+    
+    $(".login-form").css("display","none")
+    $(".forgot-form").css("display","block")
+    $(".register-form").css("display","none")
+    $(".titulo-cabecera").empty()
+    $(".titulo-cabecera").append("Olvidaste la contraseña")
+  });
+
+</script> 
+</body>
+</html>
