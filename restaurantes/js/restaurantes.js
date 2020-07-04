@@ -32,6 +32,7 @@ var firebaseConfig = {
 
 
 $(".pedidos").click(function(){
+    $(".user-items").css("background-color","white")
     $(".user-items").empty()
     $(".menuDia").empty()
     // para ya no escuchar las consultas de menu en tiempo real y no
@@ -40,6 +41,7 @@ $(".pedidos").click(function(){
 });
 
 $("settings").click(function(){
+    $(".user-items").css("background-color","white")
     $(".user-items").empty()
     $(".menuDia").empty()
     // para ya no escuchar las consultas de menu en tiempo real y no
@@ -49,11 +51,13 @@ $("settings").click(function(){
 });
 
 $(".clients").click(function(){
+    $(".user-items").css("background-color","white")
     $(".user-items").empty()
     $(".menuDia").empty()
     // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
     consulta_menu()
+    
 
 });
 
@@ -64,6 +68,7 @@ $(".logout").click(function(){
 });
 
 $(".menu").click(function(){
+    $(".user-items").css("background-color","white")
     console.log("menu")
     $(".user-items").empty()
     $(".user-items").append(`              
@@ -86,6 +91,72 @@ function VistaMenu(){
     // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
     consulta_menu()
+    var user = firebase.auth().currentUser;
+    var vista_menu=db.collection('menu').where("uid_restaurante","==",user.uid)
+    vista_menu.get()
+    .then(function(querySnapshot){
+        if(querySnapshot.empty){
+            alert('Aun no hay un menú creado')
+        }
+        else{
+            $(".user-items").css("background-color","#333333")
+            $(".user-items").append(
+                `
+                
+                    <h1 id="tituloMenuDia" class="col-12"style=" color: white;" >Menú del día </h1>
+                      
+                    <h2 id="tituloAlmuerzos" class="col-12 text-center" style=" color: #fef88f">ALMUERZOS</h2>
+
+            
+                `
+                )
+                
+            querySnapshot.forEach(function(doc){
+                const categoria=doc.data().categoria
+                const nombre=doc.data().nombre
+                const descripcion=doc.data().descripcion
+               
+                var categoriaFix = categoria.replace(/\s/g, '');
+
+                if($("#" + categoriaFix).length == 0) {
+                    //si no existe esa categoria debe crearse
+                 
+                    $(".user-items").append(`
+                    <div class="col-12 col-md-6" id="${categoriaFix}">
+                            <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
+                            <h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>
+                    </div>`
+                    )
+                  }
+
+                else{
+                      $(`#${categoriaFix}`).append(`<h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>`)
+                  }
+
+            
+
+            })
+        }
+        
+    })
+
+    var consulta_precio=db.collection('restaurantes').where("uid","==",user.uid)
+    consulta_precio.get()
+    .then(function(querySnapshot){
+        querySnapshot.forEach(function(doc){
+            const precio=doc.data().precio
+         
+            $(".user-items").append(`
+            
+            <div class="col-12 ">
+                    <h5 id="titulocategoria" class="col-12 text-center mt-5" style=" color: #fef88f">Precio: $ ${precio}</h5>
+            </div>
+            
+            `)
+        })
+    })
+    
+
 
     
 

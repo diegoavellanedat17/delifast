@@ -122,6 +122,7 @@ hr.style3 {
   #tituloAlmuerzos{
 
     font-family: 'Spartan', sans-serif;
+    font-weight: bolder;
     font-size: 2em;
   }
 
@@ -129,6 +130,26 @@ hr.style3 {
 
 
       font-family: 'Spartan', sans-serif;
+      font-weight: 900;
       font-size: 0.7em;
+
+  }
+  #platoMenu{
+    font-family: 'Spartan', sans-serif;
+    font-size: 0.6em;
+  }
+
+  @media (max-width: 550px) {
+    #tituloMenuDia{
+      font-family: 'Yellowtail', cursive;
+      font-size: 0.8rem;
+    }
+  
+    #tituloAlmuerzos{
+  
+      font-family: 'Spartan', sans-serif;
+      font-weight: bolder;
+      font-size: 1rem;
+    }
 
   }
