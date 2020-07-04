@@ -37,6 +37,7 @@
 }
 body {
     overflow-x: hidden;
+    background-color: #333333;
  
   }
 
@@ -105,3 +106,41 @@ hr.style3 {
     }
   }
 
+  #tituloMenuDia{
+    font-family: 'Yellowtail', cursive;
+  }
+
+  #tituloAlmuerzos{
+
+    font-family: 'Spartan', sans-serif;
+    font-weight: bolder;
+    font-size: 2em;
+  }
+
+  #titulocategoria{
+
+
+      font-family: 'Spartan', sans-serif;
+      font-weight: 900;
+      font-size: 0.7em;
+
+  }
+  #platoMenu{
+    font-family: 'Spartan', sans-serif;
+    font-size: 0.6em;
+  }
+
+  @media (max-width: 550px) {
+    #tituloMenuDia{
+      font-family: 'Yellowtail', cursive;
+      font-size: 1.2rem;
+    }
+  
+    #tituloAlmuerzos{
+  
+      font-family: 'Spartan', sans-serif;
+      font-weight: bolder;
+      font-size: 1rem;
+    }
+
+  }
