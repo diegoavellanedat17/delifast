@@ -48,7 +48,7 @@ $("settings").click(function(){
     
 });
 
-$(".clientes").click(function(){
+$(".clients").click(function(){
     $(".user-items").empty()
     $(".menuDia").empty()
     // para ya no escuchar las consultas de menu en tiempo real y no
@@ -67,16 +67,70 @@ $(".menu").click(function(){
     console.log("menu")
     $(".user-items").empty()
     $(".user-items").append(`              
-    <button type="button" class="btn btn-outline-secondary col-12 col-md-5 mt-3 ml-3"  onClick="AdicionarProducto()" >Adicionar Plato</button>
-    <a href="#" class="btn btn-outline-success col-12 col-md-5 mt-3 ml-3 " onClick="ModificarMenu()" > Vista del Menú</a>
+    <button type="button" class="btn btn-outline-secondary col-12 col-md-3 mt-3 ml-3"  onClick="AdicionarProducto()" >Adicionar Plato</button>
+    <a href="#" class="btn btn btn-outline-warning col-12 col-md-3 mt-3 ml-3 " onClick="PrecioMenu()" > Precio del Menú</a>
+    <a href="#" class="btn btn-outline-success col-12 col-md-3 mt-3 ml-3 " onClick="VistaMenu()" > Vista del Menú</a>
     `)
     MostrarMenuActual()
 });
+
+
 
 function AdicionarProducto(){
     $('#modal-producto').modal();
 }
 
+function VistaMenu(){
+    $(".user-items").empty()
+    $(".menuDia").empty()
+    // para ya no escuchar las consultas de menu en tiempo real y no
+    //consumir tanto ancho de banda
+    consulta_menu()
+
+    
+
+
+}
+
+function PrecioMenu(){
+    console.log("Ajustar Precio del Menú")
+    // Buscar en la base de datos el precio del menú, si no existe colocal el input vacio, si ya existe colocal el valor actual como placeholder
+    var user = firebase.auth().currentUser;
+    var consulta_precio=db.collection('restaurantes').where("uid","==",user.uid)
+    consulta_precio.get()
+    .then(function(querySnapshot){
+        querySnapshot.forEach(function(doc){
+            const precio=doc.data().precio
+            console.log(doc.id)
+            $('.id-precio').empty()
+            $('.id-precio').append(doc.id)
+            $('#precio').val(precio)
+            $('#modal-precio').modal();
+        })
+    })
+}
+
+function UpdatePrecio(){
+    var precio=document.forms["PrecioForm"]["precio"].value;
+    var user = firebase.auth().currentUser;
+    var precio_id = $(".id-precio").text(); //preferred
+    var actualizacion_precio=db.collection('restaurantes').doc(precio_id)
+    return actualizacion_precio.update({
+        precio:precio
+    })
+    .then(function() {
+        swal({
+            title:"Listo",
+              text:"Precio de Menú Actualizado",
+              icon:"success"
+          
+          })
+    })
+    .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+    });
+}
 
 function Click_modificar(ref_id){
     console.log(ref_id)
@@ -89,32 +143,57 @@ function Click_modificar(ref_id){
                 const descripcion=doc.data().descripcion
                 const dia=doc.data().dia
                 const estado=doc.data().estado
-                const semana_array=['Lunes','Martes','Miercoles','Jueves','Viernes','Sabado','Domingo']
+                const semana_array=['LunesM','MartesM','MiercolesM','JuevesM','ViernesM','SabadoM','DomingoM']
                 var i;
+
+                for (i = 0; i < dia.length; i++) { 
+                         $(`#${semana_array[i]}`).prop('checked', false);  
+                 }
+
                 for (i = 0; i < dia.length; i++) {
                    if (dia[i]=== true){
-                        console.log(semana_array[i])
+                       
                         $(`#${semana_array[i]}`).prop('checked', true);
                    }
                 }
-
+                $('.id-modificar').empty()
+                $('.id-modificar').append(ref_id)
                 $('#modificar-nombrePlato').val(nombrePlato)
                 $('#modificar-categoria').val(categoria)
                 $('#modificar-descripcion').val(descripcion)
+                $('#modificar-estado').val(estado)
                 // Checks the box
                 $('#modal-modificar-producto').modal();
 
             });
+      
+}
 
-            
-       
+function UpdatePlato(){
+    console.log("Actualizar el plato")
+    ValidarFormularioModificarProducto()
 }
 
 function GuardarPlato(){
     ValidarFormularioProducto()
 }
 
+function EliminarPlato(){
+    var ref_id = $(".id-modificar").text(); // tomo el ID del Documento 
+    db.collection('menu').doc(ref_id).delete().then(function(){
+        swal({
+            title:"Listo",
+              text:"Producto Eliminado ",
+              icon:"success"
+          
+          })
 
+    }).catch(function(error) {
+        console.error("Error removing document: ", error);
+    });
+
+
+}
 
 firebase.auth().onAuthStateChanged(user => {
     if(!user) {
@@ -179,6 +258,32 @@ function CrearNuevoPlato(categoria,semana,nombre,uid,descripcion){
 
 }
 
+function ModificarPlato(categoria,semana,nombre,ref_id,estado,descripcion){
+
+    var actualizacion_producto=db.collection('menu').doc(ref_id)
+    return actualizacion_producto.update({
+        categoria:categoria,
+        dia:semana,
+        nombre:nombre,
+        estado:estado,
+        descripcion:descripcion
+    })
+    .then(function() {
+        swal({
+            title:"Listo",
+              text:"Producto Actualizado ",
+              icon:"success"
+          
+          })
+    })
+    .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+    });
+
+}
+
+
 function ValidarFormularioProducto(){
 
     var NombrePlato = document.forms["crearProductoForm"]["NombrePlato"].value;
@@ -197,14 +302,39 @@ function ValidarFormularioProducto(){
         alert("Debes agregar el nombre de algún plato")
     }
     var user = firebase.auth().currentUser;
-
     console.log(NombrePlato);
     console.log(Semana);
     console.log(categoria);
-
-
     CrearNuevoPlato(categoria,Semana,NombrePlato,user.uid,Descripcion)
-    
+}
+
+
+function ValidarFormularioModificarProducto(){
+
+    var NombrePlato = document.forms["modificarProductoForm"]["modificar-nombrePlato"].value;
+    var categoria = document.forms["modificarProductoForm"]["modificar-categoria"].value;
+    var Lunes = document.forms["modificarProductoForm"]["Lunes"].checked;
+    var Martes = document.forms["modificarProductoForm"]["Martes"].checked;
+    var Miercoles = document.forms["modificarProductoForm"]["Miercoles"].checked;
+    var Jueves = document.forms["modificarProductoForm"]["Jueves"].checked;
+    var Viernes = document.forms["modificarProductoForm"]["Viernes"].checked;
+    var Sabado = document.forms["modificarProductoForm"]["Sabado"].checked;
+    var Domingo = document.forms["modificarProductoForm"]["Domingo"].checked;
+    var Descripcion = document.forms["modificarProductoForm"]["modificar-descripcion"].value;
+    var Semana=[Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo]
+    var estado=document.forms["modificarProductoForm"]["modificar-estado"].value;
+    var ref_id = $(".id-modificar").text(); //preferred
+
+    if(NombrePlato===""){
+        alert("Debes agregar el nombre de algún plato")
+    }
+
+    var user = firebase.auth().currentUser;
+    console.log("documento a modificar")
+    console.log(ref_id);
+ 
+
+    ModificarPlato(categoria,Semana,NombrePlato,ref_id,estado,Descripcion)
 
 }
 
@@ -215,21 +345,24 @@ function MostrarMenuActual(){
     .onSnapshot(function(querySnapshot) {
         $(".menuDia").empty()
         $(".menuDia").append(`
-        <table class="table table-hover table table-bordered">
-                        <thead>
-                          <tr>
-                          
-                            <th scope="col">Categoria</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Descripción</th>
-                            <th scope="col">Semana</th>
-                            <th scope="col">Estado</th>
-                          
-                          </tr>
-                        </thead>
-                        <tbody class="menu-item-body">
-                        </tbody>
-        </table>`)
+        <div class="table-responsive">
+                <table class="table table-hover table table-bordered">
+                                <thead>
+                                <tr>
+                                
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Descripción</th>
+                                    <th scope="col">Semana</th>
+                                    <th scope="col">Estado</th>
+                                
+                                </tr>
+                                </thead>
+                                <tbody class="menu-item-body">
+                                </tbody>
+                </table>
+                
+        </div>`)
 
         querySnapshot.forEach(function(doc) {
         const nombrePlato=doc.data().nombre

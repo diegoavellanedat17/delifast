@@ -12,7 +12,13 @@
   cursor: pointer;
 }
 
+.id-modificar{
+  display:none;
+} 
 
+.id-precio{
+  display:none;
+}
 
 .logo{
     opacity: 1;
@@ -109,3 +115,20 @@ hr.style3 {
     }
   }
 
+  #tituloMenuDia{
+    font-family: 'Yellowtail', cursive;
+  }
+
+  #tituloAlmuerzos{
+
+    font-family: 'Spartan', sans-serif;
+    font-size: 2em;
+  }
+
+  #titulocategoria{
+
+
+      font-family: 'Spartan', sans-serif;
+      font-size: 0.7em;
+
+  }

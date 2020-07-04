@@ -189,7 +189,8 @@ function GuardarInformacionRestaurante(name,email,password,person,nit,tel,userUi
         nit:nit,
 		tel:tel,
 		tipo:'restaurante',
-		uid:userUid
+		uid:userUid,
+		precio:'0',
     })
     .then(function() {
     console.log("Document successfully written!");
