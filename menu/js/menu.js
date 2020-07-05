@@ -38,33 +38,68 @@ function VerificarExistenciarestaurante(){
                 
                     <h1 id="tituloMenuDia" class="col-12 mt-3"style=" color: white;" >Menú del día </h1>
                       
-                    <h2 id="tituloAlmuerzos" class="col-12 text-center" style=" color: #fef88f">ALMUERZOS</h2>
+                    <h2 id="tituloAlmuerzos" class="col-12 text-center mb-3" style=" color: #fef88f">ALMUERZOS</h2>
 
             
                 `
                 )
 
             querySnapshot.forEach(function(doc){
-                const categoria=doc.data().categoria
-                const nombre=doc.data().nombre
-                const descripcion=doc.data().descripcion
-               
-                var categoriaFix = categoria.replace(/\s/g, '');
 
-                if($("#" + categoriaFix).length == 0) {
-                    //si no existe esa categoria debe crearse
-                 
-                    $(".user-items").append(`
-                    <div class="col-12 col-md-6" id="${categoriaFix}">
-                            <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
-                            <h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>
-                    </div>`
-                    )
-                  }
+                const uid_restaurante=doc.data().uid
+                var vista_menu=db.collection('menu').where("uid_restaurante","==",uid_restaurante)
+                vista_menu.get()
+                .then(function(querySnapshot){
+                    if(querySnapshot.empty){
+                        alert('Aun no hay un menú creado')
+                    }
+                    else{
 
-                else{
-                      $(`#${categoriaFix}`).append(`<h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>`)
-                  }
+                        querySnapshot.forEach(function(doc){
+                            const categoria=doc.data().categoria
+                            const nombre=doc.data().nombre
+                            const descripcion=doc.data().descripcion
+                            var categoriaFix = categoria.replace(/\s/g, '');
+
+                            if($("#" + categoriaFix).length == 0) {
+                                //si no existe esa categoria debe crearse
+                             
+                                $(".user-items").append(`
+                                <div class="col-12 col-md-6" id="${categoriaFix}">
+                                        <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
+                                        <h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>
+                                </div>`
+                                )
+                              }
+            
+                            else{
+                                  $(`#${categoriaFix}`).append(`<h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>`)
+                              }
+
+
+                        })
+  
+                    }
+                })
+
+                var consulta_precio=db.collection('restaurantes').where("uid","==",uid_restaurante)
+                consulta_precio.get()
+                .then(function(querySnapshot){
+                    querySnapshot.forEach(function(doc){
+                        const precio=doc.data().precio
+                     
+                        $(".user-items").append(`
+                        
+                        <div class="col-12 ">
+                                <h5 id="titulocategoria" class="col-12 text-center mt-2" style=" color: #fef88f">Precio: $ ${precio}</h5>
+                        </div>
+                        
+                        `)
+                    })
+                })
+                
+
+
                 
   
             })

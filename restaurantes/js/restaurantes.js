@@ -286,7 +286,7 @@ $(".user-name").text(userData.name)
     <h4 class="alert-heading">Hola Restaurante ${userData.name}!</h4>
     <p> Envía el sigueinte link a tus usuarios para que puedan hacer sus pedidos  </p>
     <hr>
-    <p class="mb-0" id="link">http://127.0.0.1:5500/menu/menu.html?restaurante=${nombreRestaurante}</p>
+    <p class="mb-0" id="link">https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}</p>
 
     </div>
 `
