@@ -27,14 +27,14 @@ function VerificarExistenciarestaurante(){
     consulta_restaurantes.get()
     .then(function(querySnapshot){
         if(querySnapshot.empty){
-            console.log("No existe restaurante")
-            $("#nombre").empty()
-            $("#nombre").append(" No tenemos este restaurante lo sentimos")
+            
+            alert("Ingresa un restaurante válido")
+            
 
         }
         else{
             $(".user-items").css("background-color","#333333")
-            
+            $("#button_pedir").css("display","block")
             $(".user-items").append(
                 `
                 
