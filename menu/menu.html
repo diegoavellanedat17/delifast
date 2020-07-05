@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0 shrink-to-fit=no">
      <!-- Bootstrap CSS -->
      
-     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Yellowtail&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Spartan&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <link rel="stylesheet" href="./css/menu.css" />
     <title id="titulo-Restaurante">Restaurante</title>
 </head>
@@ -36,10 +38,42 @@
             
             </div>
           </div>
+
+    <!--botón para realizar el pedido-->
+    <a href="#" class="button" id="button">Realiza tu pedido</a>
+    
+    <!--formularios que se despliegan dentro del popup-->
+    <div class="popup">
+      <div class="popup-content">
+          <form class="register-form" name="form-register" >
+              <input type="text" placeholder="Nombre Completo" name="name" />
+              <input type="text" placeholder="Dirección" name="dir" />
+              <input type="tel" placeholder="Telefono" name="telefono" />
+              <input type="email" placeholder="Email" name="email"/>
+              <input type="password" placeholder="Contraseña" name="password" />
+              <button type="submit">create</button>
+              <p class="message signin">Already registered? <a href="#">Sign In</a></p>
+          </form>
         
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+          <form class="login-form" name="form-auth">
+              <input type="email" placeholder="username" name="username"/>
+              <input type="password" placeholder="password" name="password"/>
+              <button type="submit">login</button>
+              <p class="message register">Not registered? <a href="#">Create an account</a></p>
+              <p class="message forgot">Forgot password? <a href="#">Click Here </a></p>
+          </form>
+        
+          <form class="forgot-form" name="form-forgot">
+              <input type="email" placeholder="email" name="email-address"/>
+              <button type="submit">Send Email</button>
+              <p class="message register">Not registered? <a href="#">Create an account</a></p>
+          </form>
+      </div>
+    </div>
+
+    <!--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
@@ -47,6 +81,49 @@
     <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
     <script src="./js/menu.js"></script>
 
+    <!--despliegue del popup al darle click al botón-->
+    <script>
+      document.getElementById("button").addEventListener("click", function(){
+          document.querySelector(".popup").style.display = "flex";
+      })
+    </script>
+
+    <script> 
+      
+      $(".register a").click(function(){
+    
+    
+        $("popup-content").animate({height: "toggle", opacity: "toggle"}, "slow");
+        
+        $(".login-form").css("display","none")
+        $(".forgot-form").css("display","none")
+        $(".register-form").css("display","block")
+        $(".titulo-cabecera").empty()
+        $(".titulo-cabecera").append("Registra tu restaurante")
+    
+      });
+    
+      $(".signin a").click(function(){
+        $("popup-content").animate({height: "toggle", opacity: "toggle"}, "slow");
+      
+        $(".login-form").css("display","block")
+        $(".forgot-form").css("display","none")
+        $(".register-form").css("display","none")
+        $(".titulo-cabecera").empty()
+        $(".titulo-cabecera").append("Ingresa las creedenciales de tu Restaurante")
+    
+      });
+    
+      $(".forgot a").click(function(){
+        $("popup-content").animate({height: "toggle", opacity: "toggle"}, "slow");
+        
+        $(".login-form").css("display","none")
+        $(".forgot-form").css("display","block")
+        $(".register-form").css("display","none")
+        $(".titulo-cabecera").empty()
+        $(".titulo-cabecera").append("Olvidaste la contraseña")
+      });
+    </script> 
 
 </body>
 </html>
