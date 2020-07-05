@@ -91,6 +91,8 @@ function VistaMenu(){
     // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
     consulta_menu()
+    const dia_actual=VerificarDia()
+    const dias_semana = ["Lunes", "Martes", "Miercoles","Jueves","Viernes","Sábado","Domingo"];
     var user = firebase.auth().currentUser;
     var vista_menu=db.collection('menu').where("uid_restaurante","==",user.uid)
     vista_menu.get()
@@ -115,24 +117,26 @@ function VistaMenu(){
                 const categoria=doc.data().categoria
                 const nombre=doc.data().nombre
                 const descripcion=doc.data().descripcion
+                const dias= doc.data().dia
                
                 var categoriaFix = categoria.replace(/\s/g, '');
 
-                if($("#" + categoriaFix).length == 0) {
-                    //si no existe esa categoria debe crearse
-                 
-                    $(".user-items").append(`
-                    <div class="col-12 col-md-6" id="${categoriaFix}">
-                            <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
-                            <h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>
-                    </div>`
-                    )
-                  }
+                if(dias[dia_actual]===true){  
+                    if($("#" + categoriaFix).length == 0) {
+                        //si no existe esa categoria debe crearse
+                    
+                        $(".user-items").append(`
+                        <div class="col-12 col-md-6" id="${categoriaFix}">
+                                <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
+                                <h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>
+                        </div>`
+                        )
+                    }
 
-                else{
-                      $(`#${categoriaFix}`).append(`<h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>`)
-                  }
-
+                    else{
+                        $(`#${categoriaFix}`).append(`<h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>`)
+                    }
+                }
             
 
             })
@@ -469,3 +473,16 @@ function MostrarMenuActual(){
     
 }
 
+function VerificarDia(){
+   
+    today =  new Date();
+    today_day_week=today.getDay();
+    console.log(today_day_week);
+    if(today_day_week===0){
+        return 6
+    }
+    else{
+        today_day_week=today_day_week-1
+        return today_day_week
+    }
+}
