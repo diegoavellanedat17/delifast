@@ -1,0 +1,37 @@
+<!--Este mancito es de prueba mientras miramos donde redirigimos para realizar el pedido-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos</title>
+</head>
+<body>
+    <h1>Algún dia se harán pedidos desde acá jajaja</h1>
+    <button id="myBtn">Logout</button>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
+    
+    <script>
+    var firebaseConfig = {
+    apiKey: "AIzaSyBjasCFXiGf7JZAdqlG_lo-7XMwLwUJw0E",
+    authDomain: "delifast-7576c.firebaseapp.com",
+    databaseURL: "https://delifast-7576c.firebaseio.com",
+    projectId: "delifast-7576c",
+    storageBucket: "delifast-7576c.appspot.com",
+    messagingSenderId: "415819035666",
+    appId: "1:415819035666:web:9300f229e79d85c0f6d4cb",
+    measurementId: "G-ESS36GVJTN"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    
+    document.getElementById("myBtn").addEventListener("click", function(){
+        firebase.auth().signOut()
+        window.location = 'login.html'
+    });
+    </script>
+    
+</body>
+</html>
