@@ -72,3 +72,6 @@ function VerificarExistenciarestaurante(){
         
     })
 }
+
+// Agregar boton de pedir 
+// Agregar modal de registro o autenticacion
