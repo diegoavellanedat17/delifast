@@ -203,44 +203,50 @@ function crearUsuario(event){
 }
 
 function AutenticarUsuario(event){
-	event.preventDefault();
-	const password = authForm['password'].value;
-	const username = authForm['username'].value;
-	console.log(`El usuario que quiere entrar es ${username} con  contraseña ${password}`)
+    var user = firebase.auth().currentUser;
 
-  	firebase.auth().signInWithEmailAndPassword(username, password)
-    .then(result=>{
-    	if(result.user.emailVerified){
-			window.location = '../UvR/UvR.html'; //After successful login, user will be redirected to home.html
-    		console.log('Restaurante');
-		}
-		
-      else{
+    if (user) {
+        window.location = '../UvR/UvR.html'
+    } else {
+        event.preventDefault();
+        const password = authForm['password'].value;
+        const username = authForm['username'].value;
+        console.log(`El usuario que quiere entrar es ${username} con  contraseña ${password}`)
 
-      	if(confirm("Verifica en tu correo electronico")){
-      		// //Vamos a enviar un correo para que el usuario pueda verificarse 
-			result.user.sendEmailVerification()
-			.catch(error=>{// en caso deque hayaerror en el envío del correo 
-				alert(error)
+        firebase.auth().signInWithEmailAndPassword(username, password)
+        .then(result=>{
+            if(result.user.emailVerified){
+                window.location = '../UvR/UvR.html'; //After successful login, user will be redirected to home.html
+                console.log('Restaurante');
+            }
+            
+        else{
 
-			console.error(error)
-		})
+            if(confirm("Verifica en tu correo electronico")){
+                // //Vamos a enviar un correo para que el usuario pueda verificarse 
+                result.user.sendEmailVerification()
+                .catch(error=>{// en caso deque hayaerror en el envío del correo 
+                    alert(error)
 
-      	console.log('Listo ya lo enviamos')
-      	}
-      	else{
-      		console.log('okay como quieras')
-      	}
-      	//si va entrar pero se sale
-      	firebase.auth().signOut()
-      }
-  	})
-    
-    .catch(function (error) {
-    alert(error)
-	  console.log(error);
+                console.error(error)
+            })
 
-    });
+            console.log('Listo ya lo enviamos')
+            }
+            else{
+                console.log('okay como quieras')
+            }
+            //si va entrar pero se sale
+            firebase.auth().signOut()
+        }
+        })
+        
+        .catch(function (error) {
+        alert(error)
+        console.log(error);
+
+        });
+    }
 }
 
 function olvidar_contrasena(event){
