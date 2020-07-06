@@ -18,22 +18,31 @@
 </head>
 <body>
 
-
+  
           <!-- navbar -->
-          <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-zaboo-custom ">
-        
-            
-            <a class="navbar-brand ml-3" href="#">
-                <!-- <img class="logo"src="./images/zaboo-logo_2.svg" width="120" height="40" alt=""> -->
-            </a>
-            
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-     
-          </nav>
+          <div class="row bg-zaboo-custom" >
+            <div class="col-1" >
+              LOGO DELIFST
+            </div>
+            <div class="col-8" >
+              
+            </div>
+            <div class="col-2 mt-2 mb-2 mr-2" >
+              <div class="dropleft">
+                <button class="btn btn-secondary  circulo-usuario" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <span > </span> <i class="material-icons icon">account_circle</i>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                 <p class="user-name"></p> 
+                 <a class="dropdown-item logout" href="#"><i class="material-icons icon">exit_to_app</i>Logout</a>
+                 <a class="dropdown-item settings" href="#"><i class="material-icons icon ">settings</i>Settings</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          
 
-          <div class="container-fluid mt-5 mb-5">
+          <div class="container-fluid mt-2 mb-5">
             <div class="row user-items ">
             
             </div>
@@ -46,7 +55,41 @@
 
     <!--botón para realizar el pedido-->
 
-    
+     <!-- Modal hacer Pedido-->
+           
+     <div class="modal" tabindex="-1" role="dialog" id="modal-pedido">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title modal-pedido-title">Hacer Un Pedido</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body-pedido">
+              <div class="container">
+              <form name="PedidoForm">
+                <div class="almuerzoDia"> 
+                  
+
+
+                </div>
+
+                </form>
+
+              </div>
+
+          </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+              <button type="button" class="btn btn-primary" onclick="HacerPedido()">Hacer Pedido</button>
+            </div>
+          </div>
+        </div>
+    </div>
+
+ 
+  <!-- Modal Hacer Pedido-->
     
 
 
@@ -108,11 +151,7 @@
     <!--<script src="../clientes/js/clientes.js"></script>-->
 
     <!--despliegue del popup al darle click al botón-->
-    <script>
-      document.getElementById("button_pedir").addEventListener("click", function(){
-          $("#modal-usuario").modal()
-      })
-    </script>
+
 
     <script> 
       

@@ -129,7 +129,12 @@ hr.style3 {
       font-size: 0.7em;
 
   }
-  #platoMenu{
+  .platoMenu{
+    font-family: 'Spartan', sans-serif;
+    font-size: 0.6em;
+  }
+
+  .descripcion-text{
     font-family: 'Spartan', sans-serif;
     font-size: 0.6em;
   }
@@ -233,3 +238,10 @@ input{
   color: white;
 
 }
+
+.circulo-usuario{
+  background-color: transparent;
+  border-color: transparent;
+}
+
+

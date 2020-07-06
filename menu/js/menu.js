@@ -27,10 +27,7 @@ function VerificarExistenciarestaurante(){
     consulta_restaurantes.get()
     .then(function(querySnapshot){
         if(querySnapshot.empty){
-            
-            alert("Ingresa un restaurante válido")
-            
-
+            alert("Ingresa un restaurante válido") 
         }
         else{
             $(".user-items").css("background-color","#333333")
@@ -71,15 +68,17 @@ function VerificarExistenciarestaurante(){
                                 //si no existe esa categoria debe crearse
                              
                                 $(".user-items").append(`
-                                <div class="col-12 col-md-6" id="${categoriaFix}">
+                                <div class="col-12 col-md-6 clase-categoria" id="${categoriaFix}">
                                         <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
-                                        <h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>
+                                        <h5  class="col-12 text-center platoMenu" style=" color: white">${nombre}</h5>
+                                        <p class="text-muted col-12 text-center descripcion-text">${descripcion}</p>
                                 </div>`
                                 )
                               }
             
                             else{
-                                  $(`#${categoriaFix}`).append(`<h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small></h5>`)
+                                  $(`#${categoriaFix}`).append(`<h5  class="col-12 text-center platoMenu" style=" color: white">${nombre}</h5>
+                                                                        <p class="text-muted col-12 text-center descripcion-text">${descripcion}</p>`)
                               }
                             }
 
@@ -128,6 +127,73 @@ function VerificarDia(){
         return today_day_week
     }
 }
+
+//Cuando quieran realizar un pedido
+
+document.getElementById("button_pedir").addEventListener("click", function(){
+    //debe decidirse cual modal mostrar si el de realizar pedido o realizar atenticación, esto depende si hay usuario o no 
+    var user = firebase.auth().currentUser;
+    console.log(user)
+    if(user === null){
+        $("#modal-usuario").modal()
+    }
+    else{
+        //Debe verificarse que tipo de usuario quiere hacer un pedido, si es un restaurante redirige a restaurantes 
+        // Si es un cliente abre el modal de hacer pedido 
+        var consulta_precio=db.collection('clientes').where("uid","==",user.uid)
+        consulta_precio.get()
+        .then(function(querySnapshot){
+            if(querySnapshot.empty){
+                // Seguramente es un restaurante entonces redirigimos a UvR
+                window.location = '../UvR/UvR.html'; //After successful login, user will be redirected to home.html
+
+            }
+            querySnapshot.forEach(function(doc){
+                const tipo=doc.data().tipo
+                console.log(tipo)
+                $(".almuerzoDia").empty()
+                if(tipo==='cliente'){
+                    var categorias = $(".clase-categoria").map(function() { return this.id;});
+                    console.log(categorias[0])
+                    var i;
+                    for (i = 0; i < categorias.length; i++) { 
+
+        
+                     
+                        $(".almuerzoDia").append( `
+                               
+                                <div class="form-group col-md-4">
+                                    <label for="inputState">${categorias[i]}</label>
+                                    <select id="inputState" class="form-control ${categorias[i]}class">
+                                    </select>
+                                </div> `)
+
+                                var platoPorCategoria=$(`#${categorias[i]}`).find(".platoMenu").each(function(){
+                                    console.log($( this ).text())
+                                    $(`.${categorias[i]}class`).append(`<option>${$( this ).text()}</option>`)
+                                })
+                     }
+
+
+
+                    $("#modal-pedido").modal()
+                }
+                else{
+                    alert("Comunicate con nosotros en delifast")
+                    firebase.auth().signOut()
+                }
+
+            })
+        })
+    }
+})
+
+// Cerrar sesión
+$(".logout").click(function() {
+    console.log("out")
+    firebase.auth().signOut()
+
+});
 
 // Agregar boton de pedir 
 // Agregar modal de registro o autenticacion
@@ -211,8 +277,13 @@ function AutenticarUsuario(event){
   	firebase.auth().signInWithEmailAndPassword(username, password)
     .then(result=>{
     	if(result.user.emailVerified){
-			window.location = '../UvR/UvR.html'; //After successful login, user will be redirected to home.html
-    		console.log('Restaurante');
+            swal({
+                title:"Check",
+                  text:"Bienvenido",
+                  icon:"success"
+              
+              })
+    	
 		}
 		
       else{
@@ -266,13 +337,16 @@ function olvidar_contrasena(event){
 // tengo un objeto mirando si hay o no autenticacion, si la hay abre lo otro
 firebase.auth().onAuthStateChanged(user => {
   if(user && firstTime===false) {
-   
-	console.log("Allowed User")
-	window.location = '../UvR/UvR.html';
+    var user = firebase.auth().currentUser;
+    console.log(user)
+    $(".icon").css("color","green")
+    $(".user-name").append(user.displayName)
 
   }
   else{
-	console.log("Is the first time dont redirect or Logout")
+    console.log("Is the first time dont redirect or Logout")
+    $(".icon").css("color","white")
+    $(".user-name").empty()
   }
 });
 
