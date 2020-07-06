@@ -13,6 +13,7 @@ var firebaseConfig = {
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   var db = firebase.firestore();
+  numero_almuerzos=1;
 
 
 VerificarExistenciarestaurante()
@@ -66,7 +67,17 @@ function VerificarExistenciarestaurante(){
 
                             if($("#" + categoriaFix).length == 0) {
                                 //si no existe esa categoria debe crearse
-                             
+                             if (categoriaFix === 'Entradas' || categoriaFix === 'Principio'){
+                                $(`
+                                <div class="col-12 col-md-6 clase-categoria" id="${categoriaFix}">
+                                        <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
+                                        <h5  class="col-12 text-center platoMenu" style=" color: white">${nombre}</h5>
+                                        <p class="text-muted col-12 text-center descripcion-text">${descripcion}</p>
+                                </div>`).insertAfter( "#tituloAlmuerzos" );
+    
+                             }
+
+                             else{
                                 $(".user-items").append(`
                                 <div class="col-12 col-md-6 clase-categoria" id="${categoriaFix}">
                                         <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
@@ -74,6 +85,7 @@ function VerificarExistenciarestaurante(){
                                         <p class="text-muted col-12 text-center descripcion-text">${descripcion}</p>
                                 </div>`
                                 )
+                             }
                               }
             
                             else{
@@ -152,19 +164,22 @@ document.getElementById("button_pedir").addEventListener("click", function(){
                 const tipo=doc.data().tipo
                 console.log(tipo)
                 $(".almuerzoDia").empty()
+                    $(".almuerzoDia").append( `                  <div style="border-bottom: gray 1px solid;">
+                <h5 id="almuerzoTitle">Almuerzo ${numero_almuerzos} </h5>
+                    </div>`)
+                numero_almuerzos=1;
                 if(tipo==='cliente'){
                     var categorias = $(".clase-categoria").map(function() { return this.id;});
                     console.log(categorias[0])
                     var i;
+                    
                     for (i = 0; i < categorias.length; i++) { 
 
-        
-                     
                         $(".almuerzoDia").append( `
                                
-                                <div class="form-group col-md-4">
-                                    <label for="inputState">${categorias[i]}</label>
-                                    <select id="inputState" class="form-control ${categorias[i]}class">
+                                <div class="form-group col-md-12 ${categorias[i]}${numero_almuerzos}">
+                                    <label for="input${categorias[i]}">${categorias[i]}</label>
+                                    <select id="input${categorias[i]}" class="form-control ${categorias[i]}class" name="${categorias[i]}${numero_almuerzos}">
                                     </select>
                                 </div> `)
 
@@ -187,6 +202,57 @@ document.getElementById("button_pedir").addEventListener("click", function(){
         })
     }
 })
+
+function AdicionarMenu(){
+    numero_almuerzos++;
+    $(".almuerzoDia").append( `       <div style="border-bottom: gray 1px solid;" id="almuerzoTitle${numero_almuerzos}">
+                <h5 id="almuerzoTitle">Almuerzo ${numero_almuerzos} </h5>
+                    </div>`)
+    var categorias = $(".clase-categoria").map(function() { return this.id;});
+                    var i;
+                    for (i = 0; i < categorias.length; i++) { 
+
+                        $(".almuerzoDia").append( `
+                               
+                                <div class="form-group col-md-12 ${categorias[i]}${numero_almuerzos}">
+                                    <label for="input${categorias[i]}">${categorias[i]} ${numero_almuerzos}</label>
+                                    <select id="input${categorias[i]}" class="form-control ${categorias[i]}class" name="${categorias[i]}${numero_almuerzos}">
+                                    </select>
+                                </div> `)
+
+                                var platoPorCategoria=$(`#${categorias[i]}`).find(".platoMenu").each(function(){
+                                    console.log($( this ).text())
+                                    $(`.${categorias[i]}class`).append(`<option>${$( this ).text()}</option>`)
+                                })
+                     }
+                    
+
+    if(numero_almuerzos>1 && $(".quitarMenu").length == 0){
+        $(`<button type="button" class="btn btn-outline-danger quitarMenu" onclick="QuitarMenu()">Quitar un Menú</button>`).insertAfter(".adicionarMenu")
+    }
+
+console.log(`El numero de almuerzos es ${numero_almuerzos}`)
+}
+
+function QuitarMenu(){
+    
+    if (numero_almuerzos > 1){
+
+        var categorias = $(".clase-categoria").map(function() { return this.id;});
+                    var i;
+                    for (i = 0; i < categorias.length; i++) {
+                        $(`.${categorias[i]}${numero_almuerzos}`).remove()
+                       
+                     }
+                     $(`#almuerzoTitle${numero_almuerzos}`).remove()
+                     console.log(`El numero de almuerzos quitado es ${numero_almuerzos}`)
+        numero_almuerzos--;
+    }
+
+    if(numero_almuerzos === 1){
+        $(".quitarMenu").remove()
+    }
+}
 
 // Cerrar sesión
 $(".logout").click(function() {
