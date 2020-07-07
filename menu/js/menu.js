@@ -146,6 +146,7 @@ document.getElementById("button_pedir").addEventListener("click", function(){
     //debe decidirse cual modal mostrar si el de realizar pedido o realizar atenticación, esto depende si hay usuario o no 
     var user = firebase.auth().currentUser;
     console.log(user)
+    numero_almuerzos=1;
     if(user === null){
         $("#modal-usuario").modal()
     }
@@ -161,13 +162,17 @@ document.getElementById("button_pedir").addEventListener("click", function(){
 
             }
             querySnapshot.forEach(function(doc){
+                if(numero_almuerzos === 1){
+                    $(".quitarMenu").remove()
+                }
+                
                 const tipo=doc.data().tipo
                 console.log(tipo)
                 $(".almuerzoDia").empty()
                     $(".almuerzoDia").append( `                  <div style="border-bottom: gray 1px solid;">
                 <h5 id="almuerzoTitle">Almuerzo ${numero_almuerzos} </h5>
                     </div>`)
-                numero_almuerzos=1;
+                
                 if(tipo==='cliente'){
                     var categorias = $(".clase-categoria").map(function() { return this.id;});
                     console.log(categorias[0])
@@ -179,18 +184,23 @@ document.getElementById("button_pedir").addEventListener("click", function(){
                                
                                 <div class="form-group col-md-12 ${categorias[i]}${numero_almuerzos}">
                                     <label for="input${categorias[i]}">${categorias[i]}</label>
-                                    <select id="input${categorias[i]}" class="form-control ${categorias[i]}class" name="${categorias[i]}${numero_almuerzos}">
+                                    <select id="input${categorias[i]}" class="form-control ${categorias[i]}${numero_almuerzos}class" name="${categorias[i]}${numero_almuerzos}">
                                     </select>
                                 </div> `)
 
                                 var platoPorCategoria=$(`#${categorias[i]}`).find(".platoMenu").each(function(){
                                     console.log($( this ).text())
-                                    $(`.${categorias[i]}class`).append(`<option>${$( this ).text()}</option>`)
+                                    $(`.${categorias[i]}${numero_almuerzos}class`).append(`<option>${$( this ).text()}</option>`)
                                 })
                      }
 
 
-
+                     $(".adicionarMenu").css("display","block")
+                     $(".quitarMenu").css("display","block")
+                     $(".atrasBoton").css("display","none")
+                     $(".modal-body-pedido").css("display","block")
+                     $(".hacerpedido").css("display","block")
+                     $(".enviarOrden").css("display","none") 
                     $("#modal-pedido").modal()
                 }
                 else{
@@ -216,13 +226,13 @@ function AdicionarMenu(){
                                
                                 <div class="form-group col-md-12 ${categorias[i]}${numero_almuerzos}">
                                     <label for="input${categorias[i]}">${categorias[i]} ${numero_almuerzos}</label>
-                                    <select id="input${categorias[i]}" class="form-control ${categorias[i]}class" name="${categorias[i]}${numero_almuerzos}">
+                                    <select id="input${categorias[i]}" class="form-control ${categorias[i]}${numero_almuerzos}class" name="${categorias[i]}${numero_almuerzos}">
                                     </select>
                                 </div> `)
 
                                 var platoPorCategoria=$(`#${categorias[i]}`).find(".platoMenu").each(function(){
                                     console.log($( this ).text())
-                                    $(`.${categorias[i]}class`).append(`<option>${$( this ).text()}</option>`)
+                                    $(`.${categorias[i]}${numero_almuerzos}class`).append(`<option>${$( this ).text()}</option>`)
                                 })
                      }
                     
@@ -434,4 +444,29 @@ function GuardarInformacionCliente(name,email,password,dir,tel,userUid) {
     .catch(function(error) {
     console.error("Error writing document: ", error);
 	});
+}
+
+
+function HacerPedido(){
+    // Aqui se mostrará el resumen de lo que se piensa pedir
+    if($(".atrasBoton").length == 0){
+        $(`<button type="button" class="btn btn-outline-danger atrasBoton" onclick="Atras()">Atras</button>`).insertAfter(".cerrar")
+        $(`<button type="button" class="btn btn-primary enviarOrden" onclick="EnviarOrden()">Enviar Orden</button>`).insertAfter(".cerrar")
+    }
+    $(".modal-body-pedido").css("display","none")
+    $(".adicionarMenu").css("display","none")
+    $(".quitarMenu").css("display","none")
+    $(".atrasBoton").css("display","block")
+    $(".hacerpedido").css("display","none")
+    $(".enviarOrden").css("display","block") 
+    
+}
+
+function Atras(){
+    $(".modal-body-pedido").css("display","block")
+    $(".adicionarMenu").css("display","block")
+    $(".quitarMenu").css("display","block")
+    $(".atrasBoton").css("display","none") 
+    $(".enviarOrden").css("display","none") 
+    $(".hacerpedido").css("display","block")
 }
