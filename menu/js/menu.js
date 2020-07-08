@@ -46,7 +46,7 @@ function VerificarExistenciarestaurante(){
 
             querySnapshot.forEach(function(doc){
 
-                const uid_restaurante=doc.data().uid
+                uid_restaurante=doc.data().uid
                 var vista_menu=db.collection('menu').where("uid_restaurante","==",uid_restaurante)
                 vista_menu.get()
                 .then(function(querySnapshot){
@@ -194,7 +194,7 @@ document.getElementById("button_pedir").addEventListener("click", function(){
                                 })
                      }
 
-
+                     $(".ModalHacerPedido").css("display","none")
                      $(".adicionarMenu").css("display","block")
                      $(".quitarMenu").css("display","block")
                      $(".atrasBoton").css("display","none")
@@ -449,16 +449,79 @@ function GuardarInformacionCliente(name,email,password,dir,tel,userUid) {
 
 function HacerPedido(){
     // Aqui se mostrará el resumen de lo que se piensa pedir
+    var categorias = $(".clase-categoria").map(function() { return this.id;});
+
     if($(".atrasBoton").length == 0){
         $(`<button type="button" class="btn btn-outline-danger atrasBoton" onclick="Atras()">Atras</button>`).insertAfter(".cerrar")
         $(`<button type="button" class="btn btn-primary enviarOrden" onclick="EnviarOrden()">Enviar Orden</button>`).insertAfter(".cerrar")
     }
+
     $(".modal-body-pedido").css("display","none")
     $(".adicionarMenu").css("display","none")
     $(".quitarMenu").css("display","none")
     $(".atrasBoton").css("display","block")
     $(".hacerpedido").css("display","none")
-    $(".enviarOrden").css("display","block") 
+    $(".enviarOrden").css("display","block")
+    
+    $(".ModalHacerPedido").css("display","block")
+    $(".ModalHacerPedido").empty()
+    console.log(`iterar pedido en ${numero_almuerzos}`)
+    $(".ModalHacerPedido").append(`
+    <h5>Resumen del pedido</h5>
+    <table class="table table-sm TablaHacerPedido">
+    <thead>
+    <tr class="headerTablaHacerPedido">
+    
+    </tr>
+    </thead>
+
+    <tbody class="bodyTablaHacerPedido">
+
+
+    </tbody>
+
+
+    </table>`)
+    $(".headerTablaHacerPedido").empty()
+    $(".headerTablaHacerPedido").append(`<th scope="col" >Tipo</th>`)
+
+    var j;
+
+    for (j = 1; j <= numero_almuerzos; j++) { 
+         $(".bodyTablaHacerPedido").append(`  
+                                            <tr class="tablaAlmuerzo${j}">
+                                                <th scope="row" >Almuerzo ${j} </th>
+  
+                                            </tr>
+                                            `)
+    }
+  
+    var i;
+
+    for (i = 0; i < categorias.length; i++) { 
+         $(".headerTablaHacerPedido").append(`<th scope="col">${categorias[i]}</th>`)
+        
+
+        var j;
+
+        for (j = 1; j <= numero_almuerzos; j++) { 
+             
+
+            var valueTable=document.forms["PedidoForm"][`${categorias[i]}${j}`].value
+            $(`.tablaAlmuerzo${j}`).append(`
+                                            <td > ${valueTable} </td>
+                                            `
+                )
+        }
+
+
+    }
+
+
+    
+
+
+  
     
 }
 
@@ -469,4 +532,37 @@ function Atras(){
     $(".atrasBoton").css("display","none") 
     $(".enviarOrden").css("display","none") 
     $(".hacerpedido").css("display","block")
+
+    $(".ModalHacerPedido").css("display","none")
+}
+
+function EnviarOrden(){
+    //Esta funcion escribe en la base de datos de pedidos y tambien hace un append al array 
+    // de restaurante con el uiid del cliente. 
+    var user = firebase.auth().currentUser
+    //se tendrá un array con el nombre de la categoria que tenga la orden 
+    var categorias = $(".clase-categoria").map(function() { return this.id;});
+    var categoriaPedido=[]
+    var pedido = {};
+    var i;  
+    for (i = 0; i < categorias.length; i++) { 
+        // arreglo auxiliar para ingresarle lo que va en cada categoria
+        var auxiliar_array=[]
+        var j;
+        for (j = 1; j <= numero_almuerzos; j++) { 
+            var valueTable=document.forms["PedidoForm"][`${categorias[i]}${j}`].value
+            auxiliar_array.push(valueTable)
+        }
+
+
+        pedido[`${categorias[i]}`] = auxiliar_array;
+    }
+    pedido['uid_cliente']=user.uid
+    pedido['uid_restaurante']=uid_restaurante
+
+   
+
+
+    
+    console.log(pedido)
 }
