@@ -194,6 +194,12 @@ document.getElementById("button_pedir").addEventListener("click", function(){
                                 })
                      }
 
+                     $(".almuerzoDia").append( `   <div class="form-group col-md-12 notas">
+                     <label for="notas">Notas</label>
+                     <input type="notas" class="form-control" id="notas" placeholder="Notas">
+                        </select>
+                    </div> `)
+
                      $(".ModalHacerPedido").css("display","none")
                      $(".adicionarMenu").css("display","block")
                      $(".quitarMenu").css("display","block")
@@ -214,6 +220,7 @@ document.getElementById("button_pedir").addEventListener("click", function(){
 })
 
 function AdicionarMenu(){
+    $(".notas").remove()
     numero_almuerzos++;
     $(".almuerzoDia").append( `       <div style="border-bottom: gray 1px solid;" id="almuerzoTitle${numero_almuerzos}">
                 <h5 id="almuerzoTitle">Almuerzo ${numero_almuerzos} </h5>
@@ -235,6 +242,11 @@ function AdicionarMenu(){
                                     $(`.${categorias[i]}${numero_almuerzos}class`).append(`<option>${$( this ).text()}</option>`)
                                 })
                      }
+                     $(".almuerzoDia").append( `   <div class="form-group col-md-12 notas">
+                     <label for="notas">Notas</label>
+                     <input type="notas" class="form-control" id="notas" placeholder="Notas">
+                        </select>
+                    </div> `)
                     
 
     if(numero_almuerzos>1 && $(".quitarMenu").length == 0){
@@ -516,9 +528,13 @@ function HacerPedido(){
 
 
     }
+    var notas=document.forms["PedidoForm"][`notas`].value
 
 
-    
+    if(notas!=""){
+    $( `<p>Notas</p> <small>${notas}</small>`).insertAfter( ".TablaHacerPedido" );
+
+    }
 
 
   
@@ -537,32 +553,98 @@ function Atras(){
 }
 
 function EnviarOrden(){
+    var pedido = {};
+  
     //Esta funcion escribe en la base de datos de pedidos y tambien hace un append al array 
     // de restaurante con el uiid del cliente. 
     var user = firebase.auth().currentUser
-    //se tendrá un array con el nombre de la categoria que tenga la orden 
-    var categorias = $(".clase-categoria").map(function() { return this.id;});
-    var categoriaPedido=[]
-    var pedido = {};
-    var i;  
-    for (i = 0; i < categorias.length; i++) { 
-        // arreglo auxiliar para ingresarle lo que va en cada categoria
-        var auxiliar_array=[]
-        var j;
-        for (j = 1; j <= numero_almuerzos; j++) { 
-            var valueTable=document.forms["PedidoForm"][`${categorias[i]}${j}`].value
-            auxiliar_array.push(valueTable)
-        }
+    // pedir la dirección y telefono a la base de datos 
+    var consulta_usuario=db.collection('clientes').where("uid","==",user.uid)
+    consulta_usuario.get()
+    .then(function(querySnapshot){
+        querySnapshot.forEach(function(doc){
+            var direccion= doc.data().dir
+            var telefono= doc.data().tel
+            pedido['tel']=telefono
+            pedido['dir']=direccion
+            //se tendrá un array con el nombre de la categoria que tenga la orden 
+            var categorias = $(".clase-categoria").map(function() { return this.id;});
+            var categoriaPedido=[]
+            
+            //notas del pedido
+            var notas=document.forms["PedidoForm"][`notas`].value
+            var i;  
+            for (i = 0; i < categorias.length; i++) { 
+                // arreglo auxiliar para ingresarle lo que va en cada categoria
+                var auxiliar_array=[]
+                var j;
+                for (j = 1; j <= numero_almuerzos; j++) { 
+                    var valueTable=document.forms["PedidoForm"][`${categorias[i]}${j}`].value
+                    auxiliar_array.push(valueTable)
+                }
 
 
-        pedido[`${categorias[i]}`] = auxiliar_array;
-    }
-    pedido['uid_cliente']=user.uid
-    pedido['uid_restaurante']=uid_restaurante
+                pedido[`${categorias[i]}`] = auxiliar_array;
+            }
 
+
+            pedido['uid_cliente']=user.uid
+            pedido['uid_restaurante']=uid_restaurante
+            pedido['notas']=notas
+            pedido['hora_pedido']=Date.now()
+            pedido['estado']='ordenado'
+
+            
+
+            GuardarPedido(pedido,uid_restaurante,user.uid)
+            console.log(pedido)
+        })
+    })
+    .catch(function(err){
+        console.log(err)
+    })
    
-
-
     
-    console.log(pedido)
+}
+
+function GuardarPedido(pedido,uid_restaurante,user_uid) {
+
+	
+    db.collection("pedidos").doc().set(pedido)
+    .then(function() {
+        console.log("Document successfully written!");
+        var consulta_restaurantes=db.collection('restaurantes').where("uid","==",uid_restaurante)
+        consulta_restaurantes.get()
+
+        .then(function(querySnapshot){
+
+            querySnapshot.forEach(function(doc){
+                    console.log(doc.data())
+                    var clientes=doc.data().clientes
+                    var doc_restaurante=doc.id
+                    if(clientes.includes(user_uid)!= true){
+                    clientes.push(user_uid)
+                    var actualizacion_clientes=db.collection('restaurantes').doc(doc_restaurante)
+                    return actualizacion_clientes.update({
+                        clientes: clientes
+                    })
+                    .then(function(){
+                        console.log("metido en restaurantes")
+                    })
+                    .catch(function(err){
+                        console.log(err)
+                    })
+                    }
+
+                    })
+            
+    })
+    })
+    .catch(function(error) {
+    console.error("Error writing document: ", error);
+    });
+
+ 
+    
+
 }
