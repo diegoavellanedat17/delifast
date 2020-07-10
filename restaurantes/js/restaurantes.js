@@ -13,7 +13,8 @@ var firebaseConfig = {
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   var db = firebase.firestore();
-
+  entra_consulta=0;
+  entra_pedidos=0;
   // Verificar cual es el nombre del restaurante para pasarlo como parametro
 
   function getUserData(){
@@ -32,12 +33,28 @@ var firebaseConfig = {
 
 
 $(".pedidos").click(function(){
+    entra_pedidos=1;
     $(".user-items").css("background-color","white")
     $(".user-items").empty()
     $(".menuDia").empty()
     // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
-    consulta_menu()
+    if(entra_consulta!=0){
+        consulta_menu()
+    }
+
+    var user = firebase.auth().currentUser;
+     consulta_pedidos=db.collection('pedidos').where("uid_restaurante","==",user.uid)
+    .onSnapshot(function(querySnapshot) {
+
+        querySnapshot.forEach(function(doc){
+            console.log(doc.data())
+        })
+            
+        
+
+    })
+    
 });
 
 $("settings").click(function(){
@@ -46,17 +63,99 @@ $("settings").click(function(){
     $(".menuDia").empty()
     // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
-    consulta_menu()
+    if(entra_consulta!=0){
+        consulta_menu()
+    }
+    if(entra_pedidos!=0){
+        consulta_pedidos()
+    }
     
 });
-
+// en este módulo se pueden ver los datos de las personas que han pedido al restaurante
 $(".clients").click(function(){
+    console.log("clientes")
     $(".user-items").css("background-color","white")
     $(".user-items").empty()
     $(".menuDia").empty()
     // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
-    consulta_menu()
+    if(entra_consulta!=0){
+        consulta_menu()
+    }
+
+    if(entra_pedidos!=0){
+        consulta_pedidos()
+    }
+
+    $(".user-items").append(`
+    <div class="table-responsive">
+                        <table class="table table-hover">
+                    <thead class="TablaClientesHead">
+                        <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Telefono</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Dirección</th>
+                        </tr>
+                    </thead>
+                    <tbody class="TablaClientesBody">
+                        
+                    </tbody>
+                    </table>
+                    </div>
+    
+    `)
+    var user = firebase.auth().currentUser;
+
+    var consulta_restaurantes=db.collection('restaurantes').where("uid","==",user.uid)
+        consulta_restaurantes.get()
+        .then(function(querySnapshot){
+
+            querySnapshot.forEach(function(doc){
+                    
+                    var clientes=doc.data().clientes
+                    console.log(clientes)
+                    clientes.forEach(function(element){
+                        if(element!=""){
+                            // Hacer el query a los clientes preguntando por la informacion y agregandola a la tabla 
+                            console.log("consultando ",element)
+                            var consulta_cliente=db.collection('clientes').where("uid","==",element)
+                            consulta_cliente.get()
+                                .then(function(query){
+                                    query.forEach(function(doc){
+
+                                    
+                                    var nombre=doc.data().nombre
+                                    var telefono=doc.data().tel
+                                    var email=doc.data().email
+                                    var direccion=doc.data().dir
+
+                                    $(".TablaClientesBody").append(`
+                                                        <tr>
+                                                        <th >${nombre}</th>
+                                                        <td>${telefono}</td>
+                                                        <td>${email}</td>
+                                                        <td>${direccion}</td>
+                                                    </tr>
+                                    `)
+
+                                })
+
+                            })
+                            .catch(function(err){
+                                console.log(err)
+                            })
+                        }
+                    })
+                    })
+            
+        })
+   
+    .catch(function(error) {
+    console.error("Error writing document: ", error);
+    });
+        
+
     
 
 });
@@ -68,6 +167,10 @@ $(".logout").click(function(){
 });
 
 $(".menu").click(function(){
+    if(entra_pedidos!=0){
+        consulta_pedidos()
+    }
+
     $(".user-items").css("background-color","white")
     console.log("menu")
     $(".user-items").empty()
@@ -415,6 +518,7 @@ function ValidarFormularioModificarProducto(){
 
 
 function MostrarMenuActual(){
+    entra_consulta=1;
     var user = firebase.auth().currentUser;
      consulta_menu=db.collection('menu').where("uid_restaurante","==",user.uid)
     .onSnapshot(function(querySnapshot) {
