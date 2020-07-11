@@ -15,12 +15,25 @@
 .table{
   font-family: 'Spartan', sans-serif;
 font-size: smaller;
+}
 
+.BebidasTablaMenu{
+  background-color: rgb(252, 230, 228);
+}
+.EntradasTablaMenu{
+  background-color: rgb(214, 252, 252);
+}
 
+.FuerteTablaMenu{
+  background-color: rgb(240, 217, 234);
+}
+
+.PrincipioTablaMenu{
+  background-color: rgb(251, 255, 219);
 }
 
 .hour{
-  background-color: rgb(245, 179, 171);
+  background-color: rgb(250, 211, 207);
 }
 
 .id-modificar{

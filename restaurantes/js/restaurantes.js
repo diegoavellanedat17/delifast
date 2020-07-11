@@ -46,7 +46,7 @@ $(".pedidos").click(function(){
     }
 
     var user = firebase.auth().currentUser;
-     consulta_pedidos=db.collection('pedidos').where("uid_restaurante","==",user.uid)
+     consulta_pedidos=db.collection('pedidos').where("uid_restaurante","==",user.uid).orderBy("hora_pedido")
     .onSnapshot(function(querySnapshot) {
         //var audio = new Audio('./sounds/notification.mp3')
         //audio.play()
@@ -665,7 +665,7 @@ function ValidarFormularioModificarProducto(){
 function MostrarMenuActual(){
     entra_consulta=1;
     var user = firebase.auth().currentUser;
-     consulta_menu=db.collection('menu').where("uid_restaurante","==",user.uid)
+     consulta_menu=db.collection('menu').where("uid_restaurante","==",user.uid).orderBy("categoria")
     .onSnapshot(function(querySnapshot) {
         $(".menuDia").empty()
         $(".menuDia").append(`
@@ -706,7 +706,7 @@ function MostrarMenuActual(){
 
         $(".menu-item-body").append(`
         <tr id="${doc.id}" onClick="Click_modificar(this.id)" class="item_product"> 
-            <td>${categoria}</td>
+            <td class="${categoria}TablaMenu">${categoria}</td>
             <td>${nombrePlato}</td>
             <td>${descripcion}</td>
             <td>${dias_array}</td>
