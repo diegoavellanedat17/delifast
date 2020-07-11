@@ -59,11 +59,12 @@ function VerificarExistenciarestaurante(){
                             const categoria=doc.data().categoria
                             const nombre=doc.data().nombre
                             const descripcion=doc.data().descripcion
+                            const estado= doc.data().estado
                             var categoriaFix = categoria.replace(/\s/g, '');
                             var dias= doc.data().dia
                             
 
-                        if(dias[dia_actual]===true){    
+                        if(dias[dia_actual]===true && estado==='activo'){    
 
                             if($("#" + categoriaFix).length == 0) {
                                 //si no existe esa categoria debe crearse
@@ -615,8 +616,16 @@ function GuardarPedido(pedido,uid_restaurante,user_uid) {
         console.log("Document successfully written!");
         var consulta_restaurantes=db.collection('restaurantes').where("uid","==",uid_restaurante)
         consulta_restaurantes.get()
+        
+				swal({
+					title:"Listo",
+					  text:"Pedido enviado",
+					  icon:"success"
+				  
+				  })
 
         .then(function(querySnapshot){
+
 
             querySnapshot.forEach(function(doc){
                     console.log(doc.data())

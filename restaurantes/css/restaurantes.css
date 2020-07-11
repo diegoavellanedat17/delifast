@@ -12,11 +12,26 @@
   cursor: pointer;
 }
 
+.table{
+  font-family: 'Spartan', sans-serif;
+font-size: smaller;
+
+
+}
+
+.hour{
+  background-color: rgb(245, 179, 171);
+}
+
 .id-modificar{
   display:none;
 } 
 
 .id-precio{
+  display:none;
+}
+
+.id-pedido{
   display:none;
 }
 

@@ -112,6 +112,7 @@
                                   <option>Entradas</option>
                                   <option>Principio</option>
                                   <option>Plato Fuerte</option>
+                                  <option>Bebidas</option>
                                 </select>
                               </div>
                             <div class="form-group">
@@ -154,9 +155,9 @@
            
         <!-- Modal producto Nuevo-->
 
-                <!-- modificar producto  -->
+          <!-- Modal Modificar producto  -->
            
-                <div class="modal" tabindex="-1" role="dialog" id="modal-modificar-producto">
+              <div class="modal" tabindex="-1" role="dialog" id="modal-modificar-producto">
                   <div class="modal-dialog" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
@@ -178,6 +179,7 @@
                                     <option>Entradas</option>
                                     <option>Principio</option>
                                     <option>Plato Fuerte</option>
+                                    <option>Bebidas</option>
                                   </select>
                                 </div>
                               <div class="form-group">
@@ -224,9 +226,57 @@
                     </div>
                   </div>
               </div>
-    
-             
+
           <!-- Modal Modificar producto -->
+
+          <!-- Modal Pedido -->
+           
+                <div class="modal" tabindex="-1" role="dialog" id="modal-pedido">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title modal-modal-pedido-title">Modificar Estado del pedido </h5>
+                            
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body-pedido">
+                              <div class="container">
+                                <div class="infoPedido">
+
+                                </div>
+                              <form name="PedidoForm">
+                                    <small class="id-pedido"></small>
+
+                                  <div class="form-check row">
+                                      <label for="modificar-estado-pedido">Estado Del pedido</label>
+                                      <div id="modificar-estado-pedido">
+
+                                          <input type="checkbox" name="ordenado"  class="col-1 check" id="pedido-ordenado">Ordenado
+                                          <input type="checkbox" name="recibido" class="col-1 check" id="pedido-recibido">Recibido    
+                                          <input type="checkbox" name="entregado" class="col-1 check" id="pedido-entregado">Entregado
+                                      
+                                       </div> 
+                                         
+                                  </div>
+
+
+                                </form>
+      
+                              </div>
+      
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="EstadoPedido()" >Modificar estado</button>
+                            
+                          </div>
+                        </div>
+                      </div>
+                </div>
+    
+              <!-- Modal Pedido-->
 
                   <!-- Modal Precio Plato-->
            
@@ -290,7 +340,11 @@
             })
         .resize();//trigger the resize event on page load.
 
-
+        $(document).ready(function(){
+          $('.check').click(function() {
+              $('.check').not(this).prop('checked', false);
+          });
+      });
       </script>
 
 </body>

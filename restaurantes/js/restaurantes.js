@@ -37,6 +37,8 @@ $(".pedidos").click(function(){
     $(".user-items").css("background-color","white")
     $(".user-items").empty()
     $(".menuDia").empty()
+    
+    var cantidad_menus=0
     // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
     if(entra_consulta!=0){
@@ -46,9 +48,151 @@ $(".pedidos").click(function(){
     var user = firebase.auth().currentUser;
      consulta_pedidos=db.collection('pedidos').where("uid_restaurante","==",user.uid)
     .onSnapshot(function(querySnapshot) {
+        //var audio = new Audio('./sounds/notification.mp3')
+        //audio.play()
+        $(".user-items").empty()
+        $(".user-items").append(`
+        <div class="table-responsive">
+                <table class="table table-hover table table-bordered">
+                                <thead class="thead-dark">
+                                <tr class="TablaPedidosHeader">
+                                    <th scope="col">Hora</th>
+                                    <th scope="col">Pedido</th>
+                                    <th scope="col">Dirección</th>
+                                    <th scope="col">Notas</th>
+                                    <th scope="col">Estado</th>
+                                </tr>
+                                </thead>
+                                <tbody class="TablaPedidosBody">
+                                </tbody>
+                </table>
+                
+        </div>`)
 
         querySnapshot.forEach(function(doc){
-            console.log(doc.data())
+            var pedido={}
+            var EntradasPedido=doc.data().Entradas
+            var PrincipioPedido=doc.data().Principio
+            var PlatoFuertePedido=doc.data().PlatoFuerte
+            var BebidasPedido=doc.data().Bebidas
+            const hora_pedido=doc.data().hora_pedido
+            const direccion=doc.data().dir
+            const notas=doc.data().notas
+            const estado=doc.data().estado
+            var date_pedido= new Date (hora_pedido)
+            hora_print=date_pedido.toLocaleString()
+            console.log(date_pedido)
+            //Primero toca Validar si hay algo dentro del item y no esta creado el header
+            if(EntradasPedido!= undefined ){
+                //Meterse a recorrer el arreglo
+                cantidad_menu=EntradasPedido.length
+                                
+                for (i = 0; i < EntradasPedido.length; i++) {
+                    //Verificar que exista ese key dentro del objeto
+                    if (!([`menu${[i]}`] in pedido)){// verdadero si no existe el key
+                     
+                        pedido[`menu${[i]}`]=[]
+                        pedido[`menu${[i]}`][0] = EntradasPedido[i];
+                    }
+                    else{
+         
+                        var array_aux= pedido[`menu${[i]}`]
+                        array_aux.push(EntradasPedido[i])
+                        pedido[`menu${[i]}`] = array_aux;
+                    }
+              
+                }
+            }
+            //Primero toca Validar si hay algo dentro del item y no esta creado el header
+                        
+            if(PrincipioPedido!= undefined ){
+                cantidad_menu=PrincipioPedido.length
+
+                for (i = 0; i < PrincipioPedido.length; i++) {
+                    //Verificar que exista ese key dentro del objeto
+                    if (!([`menu${[i]}`] in pedido)){// verdadero si no existe el key
+                
+                        pedido[`menu${[i]}`]=[]
+                        pedido[`menu${[i]}`][0] = PrincipioPedido[i];
+                    }
+                    else{
+               
+                        var array_aux= pedido[`menu${[i]}`]
+                        array_aux.push(PrincipioPedido[i])
+                        pedido[`menu${[i]}`] = array_aux;
+                    }
+                   
+                }
+   
+            }
+            //Primero toca Validar si hay algo dentro del item y no esta creado el header
+
+            if(PlatoFuertePedido!= undefined ){
+                cantidad_menu=PlatoFuertePedido.length
+
+                for (i = 0; i < PlatoFuertePedido.length; i++) {
+                    //Verificar que exista ese key dentro del objeto
+                    if (!([`menu${[i]}`] in pedido)){// verdadero si no existe el key
+                    
+                        pedido[`menu${[i]}`]=[]
+                        pedido[`menu${[i]}`][0] = PlatoFuertePedido[i];
+                    }
+                    else{
+                 
+                        var array_aux= pedido[`menu${[i]}`]
+                        array_aux.push(PlatoFuertePedido[i])
+                        pedido[`menu${[i]}`] = array_aux;
+                    }
+                    //pedido[`menu${[i]}`] = EntradasPedido[i];
+                }
+
+            }
+            //Primero toca Validar si hay algo dentro del item y no esta creado el header
+            if(BebidasPedido!= undefined ){
+                cantidad_menu=BebidasPedido.length
+
+                for (i = 0; i < BebidasPedido.length; i++) {
+                    //Verificar que exista ese key dentro del objeto
+                    if (!([`menu${[i]}`] in pedido)){// verdadero si no existe el key
+                     
+                        pedido[`menu${[i]}`]=[]
+                        pedido[`menu${[i]}`][0] = BebidasPedido[i];
+                    }
+                    else{
+                     
+                        var array_aux= pedido[`menu${[i]}`]
+                        array_aux.push(BebidasPedido[i])
+                        pedido[`menu${[i]}`] = array_aux;
+                    }
+                    //pedido[`menu${[i]}`] = EntradasPedido[i];
+                }
+        
+            }
+
+            console.log(pedido)
+
+            $(".TablaPedidosBody").append(`     <tr id="${doc.id}" onClick="ClickPedido(this.id)">
+                                                    <th scope="row" class="hour"><small>${hora_print}</small></th>
+                                                    <td id="${doc.id}pedido"></td>
+                                                </tr>`)
+            
+            for( i=0; i<cantidad_menu;i++){
+
+                $(`#${doc.id}pedido`).append(`
+                <div class="row">
+                    <div class="col-12" style="border-bottom: solid 1px #e8e8e8;">
+                        <p>Menu: ${i+1} <small>${pedido[`menu${i}`]}</small></p>
+                    </div>
+                </div>
+                `)
+                
+            }
+
+            $(`#${doc.id}`).append(`<td ><small>${direccion}</small></td>
+                                    <td ><small>${notas}</small></td>
+                                    <td ><small>${estado}</small></td>`)
+
+
         })
             
         
@@ -221,10 +365,11 @@ function VistaMenu(){
                 const nombre=doc.data().nombre
                 const descripcion=doc.data().descripcion
                 const dias= doc.data().dia
+                const estado= doc.data().estado
                
                 var categoriaFix = categoria.replace(/\s/g, '');
 
-                if(dias[dia_actual]===true){  
+                if(dias[dia_actual]===true && estado==='activo'){  
                     if($("#" + categoriaFix).length == 0) {
                         //si no existe esa categoria debe crearse
                     
@@ -589,4 +734,82 @@ function VerificarDia(){
         today_day_week=today_day_week-1
         return today_day_week
     }
+}
+
+function ClickPedido(ref_id){
+    $('.id-pedido').empty()
+    $('.id-pedido').append(ref_id)
+    $(".infoPedido").empty()
+    console.log(ref_id)
+    var consulta_pedido=db.collection('pedidos').doc(ref_id)
+    consulta_pedido.get()
+    .then(function(doc){
+
+        const tel= doc.data().tel
+        const dir= doc.data().dir
+        const estado= doc.data().estado
+        console.log(tel)
+        $(".infoPedido").append(`                                 
+        <div>
+        <h5>Contacto del pedido</h5>
+        <p>Telefono : <small>${tel}</small></p>
+        <p>Dirección: <small>${dir}</small></p>
+        </div>`)
+        $(`#pedido-ordenado`).prop('checked', false);  
+        $(`#pedido-recibido`).prop('checked', false);  
+        $(`#pedido-entregado`).prop('checked', false);  
+        if(estado=== 'ordenado'){
+            $(`#pedido-ordenado`).prop('checked', true);  
+        }
+        else if(estado==='recibido'){
+            $(`#pedido-recibido`).prop('checked', true);  
+        }
+        else{
+            $(`#pedido-entregado`).prop('checked', true);  
+        }
+    })
+    
+    $("#modal-pedido").modal()
+}
+
+function EstadoPedido(){
+    var ref_id = $(".id-pedido").text(); //preferred
+    var Ordenado = document.forms["PedidoForm"]["ordenado"].checked;
+    var Recibido = document.forms["PedidoForm"]["recibido"].checked;
+    var Entregado= document.forms["PedidoForm"]["entregado"].checked;
+    if(Ordenado!=true && Recibido!=true && Entregado!= true){
+        console.log("selecciona alguna")
+    }
+
+    else{
+        var estado=''
+        if(Ordenado===true){
+            estado='ordenado'
+        }
+        else if (Recibido===true){
+            estado='recibido'
+        }
+        else{
+            estado='entregado'
+        }
+        var actualizar_estado_pedido=db.collection('pedidos').doc(ref_id)
+        return actualizar_estado_pedido.update({
+            estado: estado
+        })
+        .then(function() {
+            swal({
+                title:"Estado del Pedido",
+                  text:"Modificado ",
+                  icon:"success"
+              
+              })
+        })
+        .catch(function(error) {
+            // The document probably doesn't exist.
+            console.error("Error updating document: ", error);
+        });
+        
+        
+    }
+
 }
