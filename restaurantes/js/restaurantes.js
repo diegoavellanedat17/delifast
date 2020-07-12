@@ -46,7 +46,7 @@ $(".pedidos").click(function(){
     }
 
     var user = firebase.auth().currentUser;
-     consulta_pedidos=db.collection('pedidos').where("uid_restaurante","==",user.uid).orderBy("hora_pedido")
+     consulta_pedidos=db.collection('pedidos').where("uid_restaurante","==",user.uid).orderBy("hora_pedido","desc")
     .onSnapshot(function(querySnapshot) {
         //var audio = new Audio('./sounds/notification.mp3')
         //audio.play()
