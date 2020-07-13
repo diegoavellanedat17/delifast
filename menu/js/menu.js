@@ -614,16 +614,17 @@ function GuardarPedido(pedido,uid_restaurante,user_uid) {
     db.collection("pedidos").doc().set(pedido)
     .then(function() {
         console.log("Document successfully written!");
+        swal({
+            title:"Listo",
+              text:"Pedido enviado",
+              icon:"success"
+          
+          }).then(()=>{
+            $("#modal-pedido").modal('toggle');
+            console.log("cerrar modal")
+          })
         var consulta_restaurantes=db.collection('restaurantes').where("uid","==",uid_restaurante)
         consulta_restaurantes.get()
-        
-				swal({
-					title:"Listo",
-					  text:"Pedido enviado",
-					  icon:"success"
-				  
-				  })
-
         .then(function(querySnapshot){
 
 

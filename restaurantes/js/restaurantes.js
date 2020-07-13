@@ -802,6 +802,9 @@ function EstadoPedido(){
                   text:"Modificado ",
                   icon:"success"
               
+              }).then(()=>{
+                $("#modal-pedido").modal('toggle');
+                console.log("cerrar modal")
               })
         })
         .catch(function(error) {
