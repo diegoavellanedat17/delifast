@@ -116,6 +116,10 @@ function VerificarExistenciarestaurante(){
                         `)
                     })
                 })
+
+
+
+
                 
 
 
@@ -278,11 +282,21 @@ function QuitarMenu(){
 }
 
 // Cerrar sesión
-$(".logout").click(function() {
+function logout(){
     console.log("out")
     firebase.auth().signOut()
+    location.reload()
 
-});
+}
+
+// Click en entrar 
+function entrar(){
+    console.log("entrar")
+    $("#modal-usuario").modal()
+
+}
+
+
 
 // Agregar boton de pedir 
 // Agregar modal de registro o autenticacion
@@ -314,7 +328,9 @@ function crearUsuario(event){
 			title:"Advertencia",
 			  text:"Debes llenar todos los campos",
 			  icon:"warning"
-		  })
+		  }).then(function(){
+            $("#modal-usuario").modal('toggle');
+          })
 	}
 
 	else{
@@ -336,8 +352,8 @@ function crearUsuario(event){
 				// Email sent.
 
 				swal({
-					title:"Check",
-					  text:"Please check you email",
+					title:"Listo",
+					  text:"Revisa tu email",
 					  icon:"success"
 				  
 				  })
@@ -371,6 +387,8 @@ function AutenticarUsuario(event){
                   text:"Bienvenido",
                   icon:"success"
               
+              }).then(function(){
+                $("#modal-usuario").modal('toggle');
               })
     	
 		}
@@ -430,14 +448,50 @@ firebase.auth().onAuthStateChanged(user => {
     console.log(user)
     $(".icon").css("color","green")
     $(".user-name").append(user.displayName)
+    $(".user-dropdown").empty()
+    $(".user-dropdown").append(
+    `
+    <button class="dropdown-item" onClick="logout()"><i class="material-icons icon">mylo</i>Salir</button>
+    <button class="dropdown-item" onClick="user_dashboard()"><i class="material-icons icon">restaurant_menu</i>Mis Pedidos</button>
+    <button class="dropdown-item" onClick="address()"><i class="material-icons icon">my_location</i>Cambiar dirección</button>
+    
+    `
+    )
+   
+    var consulta_usuario=db.collection('clientes').where("uid","==",user.uid)
+    consulta_usuario.get()
+    .then(function(querySnapshot){
+
+    querySnapshot.forEach(function(doc){
+         var direccionEntrega= doc.data().dir
+         $(".direccion-space").empty()
+         $(".direccion-space").append(`<p>Dirección de entrega : ${direccionEntrega}</p>`)
+    })
+
+    })
+    .catch((error)=>{
+        console.log(error)
+    })
+
+
+
+    
+    
 
   }
   else{
+    
     console.log("Is the first time dont redirect or Logout")
     $(".icon").css("color","white")
     $(".user-name").empty()
+    $(".user-dropdown").empty()
+    $(".user-dropdown").append(`<button class="dropdown-item" onClick="entrar()"><i class="material-icons icon">login</i>Entrar</button>`)
   }
 });
+
+
+
+
 
 function GuardarInformacionCliente(name,email,password,dir,tel,userUid) {
 
@@ -657,4 +711,52 @@ function GuardarPedido(pedido,uid_restaurante,user_uid) {
  
     
 
+}
+
+function address(){
+    console.log("cambiar direccion")
+
+   
+    var user = firebase.auth().currentUser
+    var consulta_usuario=db.collection('clientes').where("uid","==",user.uid)
+    consulta_usuario.get()
+    .then(function(querySnapshot){
+
+        querySnapshot.forEach(function(doc){
+            // Mostrar la direccion actual 
+            const direccionActual=doc.data().dir
+            
+            $(".user-direccion-modify").empty()
+            $(".user-direccion-modify").append(doc.id)
+            $("#direccionInput").val(direccionActual)
+            $("#modal-direccion").modal()
+        })
+
+    })
+
+}
+
+function cambiar_direccion(){
+    var user_doc_id = $(".user-direccion-modify").text(); //preferred
+    var direccionNueva= document.forms["DireccionForm"]["direccion"].value;
+    var actualizacion_direccion=db.collection('clientes').doc(user_doc_id)
+    return actualizacion_direccion.update({
+        dir: direccionNueva
+    })
+    .then(function() {
+        swal({
+            title:"Listo",
+              text:"Dirección de envío actualizada",
+              icon:"success"
+          
+          }).then(function(){
+            $("#modal-direccion").modal('toggle');
+            location.reload();
+
+          })
+    })
+    .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+    });
 }

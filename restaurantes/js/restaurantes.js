@@ -201,7 +201,7 @@ $(".pedidos").click(function(){
     
 });
 
-$("settings").click(function(){
+$(".settings").click(function(){
     $(".user-items").css("background-color","white")
     $(".user-items").empty()
     $(".menuDia").empty()
@@ -213,6 +213,31 @@ $("settings").click(function(){
     if(entra_pedidos!=0){
         consulta_pedidos()
     }
+    console.log("configuracion")
+
+    $(".user-items").append( `                     
+                            <div class="col-12">
+                            <form>
+                            <div class="form-group">
+                                <label for="cambiarNumero">Cambiar Número del restaurante</label>
+                                <input type="tel" class="form-control" id="cambiarNumero"  placeholder="Cambiar Número" name="cambiarNumero" >
+                        
+                            </div>
+                            <div class="form-group">
+                                <label for="cambiarDireccion">Password</label>
+                                <input type="text" class="form-control" id="cambiarNumero" placeholder="Dirección" name="cambiarNumero">
+                            </div>
+
+                            <div class="form-group">
+                            <label for="logo">Logo</label>
+                            <input type="file" class="form-control" id="logo" placeholder="Ingresa tu Logo" name="logo">
+                            </div>
+
+                            <button type="button" class="btn btn-primary">Cambiar</button>
+                            </form>
+                        </div>`)
+                
+
     
 });
 // en este módulo se pueden ver los datos de las personas que han pedido al restaurante

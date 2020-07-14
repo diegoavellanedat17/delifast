@@ -167,6 +167,16 @@ hr.style3 {
     border-color: #D16647;
 }
 
+.user-direccion-modify{
+  display:none;
+}
+
+.direccion-space{
+  font-family: 'Spartan', sans-serif;
+  color: white;
+  font-size: smaller;
+}
+
 .modal-header{
   background: #D16647;
 }
