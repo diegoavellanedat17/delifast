@@ -19,7 +19,7 @@ firebase.auth().onAuthStateChanged(user => {
         consulta_pedidos.orderBy("hora_pedido", "desc").get() // fue necesario habilitar un índice compuesto en firebase para que este query funcione
         .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc){
-                var fecha = new Date(doc.data().hora_pedido).toLocaleString("en-US")
+                var fecha = new Date(doc.data().hora_pedido).toLocaleString("es-CO")
                 var entrada = doc.data().Entradas
                 var principio = doc.data().Principio
                 var platofuerte = doc.data().PlatoFuerte
@@ -27,45 +27,29 @@ firebase.auth().onAuthStateChanged(user => {
                 var notas = doc.data().notas
                 var estado = doc.data().estado
                 const len = platofuerte.length
-                console.log(len)
-
-                for(i=0; i < len; i++){ 
-                    $(".TablaPedidosBody").append(`
+                
+                var i = 0;
+                var rs = `
                     <tr>
-                    <th scope="row"><small>${fecha}</small></th>
+                    <th rowspan="${len}" scope="rowgroup">${fecha}</th>`;
+                var rowtext = `
                     <td>${entrada[i]}</td>
                     <td>${principio[i]}</td>
                     <td>${platofuerte[i]}</td>
                     <td>${bebida[i]}</td>
                     <td>${notas}</td>
                     <td>${estado}</td>
-                    </tr>
-                    `);
-                }
+                    </tr>`;
+                var tr = `
+                    <tr>`
                 
-                // $(".TablaPedidosBody").append(`
-                // <tr>
-                // <th rowspan="${len}" scope="rowgroup"><small>${fecha}</small></th>`)
-
-                // var i = 0;
-                // const tr = `<tr>`;
-                // const rowtext = `
-                // <td>${entrada[i]}</td>
-                // <td>${principio[i]}</td>
-                // <td>${platofuerte[i]}</td>
-                // <td>${bebida[i]}</td>
-                // <td>${notas}</td>
-                // <td>${estado}</td>
-                // </tr>
-                // `;
-                // console.log(tr.concat(rowtext))
-                // for(; i < len; i++){ 
-                //     if (i=0) {
-                //         $(".TablaPedidosBody").append(rowtext)
-                //     } else {
-                //         $(".TablaPedidosBody").append(tr.concat(rowtext))
-                //     }
-                // }                               
+                for(; i < len; i++){ 
+                    if (i==0) {
+                        $(".TablaPedidosBody").append(rs.concat(rowtext))
+                    } else {
+                        $(".TablaPedidosBody").append(tr.concat(rowtext))
+                    }
+                }                               
             })
         })
     $(".icon").css("color","green")
