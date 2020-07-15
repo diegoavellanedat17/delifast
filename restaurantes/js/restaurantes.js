@@ -15,6 +15,7 @@ var firebaseConfig = {
   var db = firebase.firestore();
   entra_consulta=0;
   entra_pedidos=0;
+  entra_carta=0;
   // Verificar cual es el nombre del restaurante para pasarlo como parametro
 
   function getUserData(){
@@ -43,6 +44,10 @@ $(".pedidos").click(function(){
     //consumir tanto ancho de banda
     if(entra_consulta!=0){
         consulta_menu()
+    }
+
+    if(entra_carta!=0){
+        consulta_carta()
     }
 
     var user = firebase.auth().currentUser;
@@ -213,6 +218,11 @@ $(".settings").click(function(){
     if(entra_pedidos!=0){
         consulta_pedidos()
     }
+
+    if(entra_carta!=0){
+        consulta_carta()
+    }
+
     console.log("configuracion")
 
     $(".user-items").append( `                     
@@ -255,6 +265,11 @@ $(".clients").click(function(){
     if(entra_pedidos!=0){
         consulta_pedidos()
     }
+
+    if(entra_carta!=0){
+        consulta_carta()
+    }
+
 
     $(".user-items").append(`
     <div class="table-responsive">
@@ -339,6 +354,10 @@ $(".menu").click(function(){
     if(entra_pedidos!=0){
         consulta_pedidos()
     }
+    if(entra_carta!=0){
+        consulta_carta()
+    }
+
 
     $(".user-items").css("background-color","white")
     console.log("menu")
@@ -350,6 +369,27 @@ $(".menu").click(function(){
     `)
     MostrarMenuActual()
 });
+
+$(".carta").click(function(){
+    console.log("carta")
+    if(entra_consulta!=0){
+        consulta_menu()
+    }
+
+    if(entra_pedidos!=0){
+        consulta_pedidos()
+    }
+
+    $(".user-items").css("background-color","white")
+    console.log("menu")
+    $(".user-items").empty()
+    $(".user-items").append(`              
+    <button type="button" class="btn btn-outline-secondary col-12  mt-3 ml-3"  onClick="AdicionarProductoCarta()" >Adicionar Plato Carta</button>
+
+    `)
+    MostrarCartaActual()
+
+})
 
 
 
@@ -377,7 +417,7 @@ function VistaMenu(){
             $(".user-items").append(
                 `
                 
-                    <h1 id="tituloMenuDia" class="col-12"style=" color: white;" >Menú del día </h1>
+                    <h1 id="tituloMenuDia" class="col-12"style=" color: white;" >Menú del día ${dia_actual} </h1>
                       
                     <h2 id="tituloAlmuerzos" class="col-12 text-center" style=" color: #fef88f">ALMUERZOS</h2>
 
@@ -432,10 +472,46 @@ function VistaMenu(){
             `)
         })
     })
+    // Carta del restaurante 
     
+    var vista_carta=db.collection('carta').where("uid_restaurante","==",user.uid)
+    vista_carta.get()
+    .then(function(querySnapshot){
+        if(querySnapshot.empty){
+            console.log("No hay productos de carta ")
+        }
+        else{
+            $(".user-items").append(`<h2 id="tituloAlmuerzos" class="col-12 text-center mt-5" style=" color: #fef88f">CARTA</h2>`)
+             
+            querySnapshot.forEach(function(doc){
+                const categoria=doc.data().categoria
+                const nombre=doc.data().nombre
+                const descripcion=doc.data().descripcion
+                const precio= doc.data().precio
+                const estado= doc.data().estado
+                console.log(doc.data())
+                var categoriaFix = categoria.replace(/\s/g, '');
 
+                if(estado==='activo'){  
+                    if($(`#${categoriaFix}Carta`).length == 0) {
+                        //si no existe esa categoria debe crearse
+                    
+                        $(".user-items").append(`
+                        <div class="col-12 col-md-6" id="${categoriaFix}Carta">
+                                <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
+                                <h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small> <small class="text-muted">${precio}</small></h5>
+                        </div>`
+                        )
+                    }
 
-    
+                    else{
+                        $(`#${categoriaFix}Carta`).append(`<h5 id="platoMenu" class="col-12 text-center" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small> <small class="text-muted">${precio}</small></h5>`)
+                    }
+                }
+            })
+
+        }
+    })
 
 
 }
@@ -839,5 +915,217 @@ function EstadoPedido(){
         
         
     }
+
+}
+
+// Módulo de Carta 
+
+function MostrarCartaActual(){
+    entra_carta=1;
+    var user = firebase.auth().currentUser;
+     consulta_carta=db.collection('carta').where("uid_restaurante","==",user.uid).orderBy("categoria")
+    .onSnapshot(function(querySnapshot) {
+        $(".menuDia").empty()
+        $(".menuDia").append(`
+        <div class="table-responsive">
+                <table class="table table-hover table table-bordered">
+                                <thead>
+                                <tr>
+                                
+                                    <th scope="col">Categoria</th>
+                                    <th scope="col">Nombre</th>
+                                    <th scope="col">Descripción</th>
+                                    <th scope="col">Precio</th>
+                                    <th scope="col">Estado</th>
+                                
+                                </tr>
+                                </thead>
+                                <tbody class="menu-item-body">
+                                </tbody>
+                </table>
+                
+        </div>`)
+
+        querySnapshot.forEach(function(doc) {
+        const nombrePlato=doc.data().nombre
+        const categoria=doc.data().categoria
+        const descripcion=doc.data().descripcion
+        const precio=doc.data().precio
+        const estado=doc.data().estado
+       
+        $(".menu-item-body").append(`
+        <tr id="${doc.id}" onClick="Click_modificarCarta(this.id)" class="item_product"> 
+            <td class="${categoria}TablaMenu">${categoria}</td>
+            <td>${nombrePlato}</td>
+            <td>${descripcion}</td>
+            <td>$${precio}</td>
+            <td>${estado}</td>
+        
+        </tr>
+        
+        `)
+        
+        });
+    });
+
+    
+}
+
+function AdicionarProductoCarta(){
+    $('#modal-producto-carta').modal();
+}
+
+function GuardarPlatoCarta(){
+    ValidarFormularioProductoCarta()
+}
+
+function ValidarFormularioProductoCarta(){
+
+    var NombrePlato = document.forms["crearProductoCartaForm"]["NombrePlato"].value;
+    var categoria = document.forms["crearProductoCartaForm"]["categoria"].value;
+    var Descripcion = document.forms["crearProductoCartaForm"]["descripcion"].value;
+    var Precio =document.forms["crearProductoCartaForm"]["precio"].value;
+
+
+    if(NombrePlato==="" || Precio ===""){
+        alert("Debes agregar el nombre de algún plato")
+    }
+
+    var user = firebase.auth().currentUser;
+  
+    CrearNuevoPlatoCarta(categoria,Precio,NombrePlato,user.uid,Descripcion)
+}
+
+function CrearNuevoPlatoCarta(categoria,Precio,nombre,uid,descripcion){
+
+   
+   
+    db.collection("carta").doc().set({
+        categoria:categoria,
+        nombre:nombre,
+        estado:"activo",
+        uid_restaurante:uid,
+        descripcion:descripcion,
+        precio: Precio,
+    })
+    .then(function() {
+        swal({
+            title:"Listo",
+              text:"Producto Adicionado ",
+              icon:"success"
+          
+          }).then(function(){
+            $('#modal-producto-carta').modal("toggle");
+          })
+    })
+    .catch(function(error) {
+    console.error("Error writing document: ", error);
+    });
+
+
+
+
+
+}
+
+function Click_modificarCarta(ref_id){
+    console.log(ref_id)
+    var consulta_producto=db.collection('carta').doc(ref_id)
+    consulta_producto.get()
+    .then(function(doc){
+            
+                const nombrePlato=doc.data().nombre
+                const categoria=doc.data().categoria
+                const descripcion=doc.data().descripcion
+                const precio=doc.data().precio
+                const estado=doc.data().estado
+                
+
+                $('.id-modificarCarta').empty()
+                $('.id-modificarCarta').append(ref_id)
+                $('#modificarCarta-nombrePlato').val(nombrePlato)
+                $('#modificarCarta-categoria').val(categoria)
+                $('#modificarCarta-descripcion').val(descripcion)
+                $('#modificarCarta-precio').val(precio)
+                $('#modificarCarta-estado').val(estado)
+                // Checks the box
+                $('#modal-modificarCarta-producto').modal();
+
+            });
+      
+}
+
+function UpdatePlatoCarta(){
+    console.log("Actualizar el plato")
+    ValidarFormularioModificarProductoCarta()
+}
+
+
+function ValidarFormularioModificarProductoCarta(){
+
+    var NombrePlato = document.forms["modificarCartaProductoForm"]["modificarCarta-nombrePlato"].value;
+    var categoria = document.forms["modificarCartaProductoForm"]["modificarCarta-categoria"].value;
+    
+    var Descripcion = document.forms["modificarCartaProductoForm"]["modificarCarta-descripcion"].value;
+    var Precio = document.forms["modificarCartaProductoForm"]["modificarCarta-precio"].value;
+    var estado=document.forms["modificarCartaProductoForm"]["modificarCarta-estado"].value;
+    var ref_id = $(".id-modificarCarta").text(); //preferred
+
+    if(NombrePlato==="" || Precio ===""){
+        alert("Debes agregar el nombre de algún plato o el precio")
+    }
+
+    var user = firebase.auth().currentUser;
+    console.log("documento a modificar")
+    console.log(ref_id);
+ 
+
+    ModificarPlatoCarta(categoria,Precio,NombrePlato,ref_id,estado,Descripcion)
+
+}
+
+function ModificarPlatoCarta(categoria,Precio,nombre,ref_id,estado,descripcion){
+
+    var actualizacion_producto=db.collection('carta').doc(ref_id)
+    return actualizacion_producto.update({
+        categoria:categoria,
+        precio:Precio,
+        nombre:nombre,
+        estado:estado,
+        descripcion:descripcion
+    })
+    .then(function() {
+        swal({
+            title:"Listo",
+              text:"Producto Actualizado ",
+              icon:"success"
+          
+          }).then(function(){
+            $('#modal-modificarCarta-producto').modal("toggle");
+          })
+    })
+    .catch(function(error) {
+        // The document probably doesn't exist.
+        console.error("Error updating document: ", error);
+    });
+
+}
+
+function EliminarPlatoCarta(){
+    var ref_id = $(".id-modificarCarta").text(); // tomo el ID del Documento 
+    db.collection('carta').doc(ref_id).delete().then(function(){
+        swal({
+            title:"Listo",
+              text:"Producto Eliminado ",
+              icon:"success"
+          
+          }).then(function(){
+            $('#modal-modificarCarta-producto').modal("toggle");
+          })
+
+    }).catch(function(error) {
+        console.error("Error removing document: ", error);
+    });
+
 
 }

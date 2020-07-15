@@ -155,6 +155,8 @@
            
         <!-- Modal producto Nuevo-->
 
+
+
           <!-- Modal Modificar producto  -->
            
               <div class="modal" tabindex="-1" role="dialog" id="modal-modificar-producto">
@@ -278,7 +280,7 @@
     
               <!-- Modal Pedido-->
 
-                  <!-- Modal Precio Plato-->
+                <!-- Modal Precio Plato-->
            
                   <div class="modal" tabindex="-1" role="dialog" id="modal-precio">
                     <div class="modal-dialog" role="document">
@@ -311,10 +313,131 @@
                         </div>
                       </div>
                     </div>
-                </div>
+                  </div> 
+              <!-- Modal Precio Plato-->
+
+              <!-- Modal producto  Nuevo carta-->  
+                  <div class="modal" tabindex="-1" role="dialog" id="modal-producto-carta">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title modal-producto-title">Adicionar un Producto de Carta</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                            </button>
+                          </div>
+                          <div class="modal-body-producto">
+                              <div class="container">
+                              <form name="crearProductoCartaForm">
+                                  <div class="form-group">
+                                      <label for="categoria">Categoría</label>
+                                      <select id="categoria" class="form-control" name="categoria">
+                                        <option selected>Escoge una</option>
+                                        <option>Entradas</option>
+                                        <option>Principio</option>
+                                        <option>Plato Fuerte</option>
+                                        <option>Bebidas</option>
+                                      </select>
+                                    </div>
+                                  <div class="form-group">
+                                      <label for="nombrePlato">Nombre del Plato</label>
+                                      <input type="text" class="form-control" id="nombrePlato" placeholder="Nombre del Plato" name="NombrePlato">
+                                   </div>
       
-               
-            <!-- Modal Precio Plato-->
+                                   <div class="form-group">
+                                      <label for="descripcion">Descripción</label>
+                                      <input type="text" class="form-control" id="descripcion" placeholder="Descripción (Opcional)" name="descripcion">
+                                   </div>
+
+                                   <div class="form-group">
+                                    <label for="precioCarta">Precio</label>
+                                    <input type="number" class="form-control" id="precioCarta" placeholder="Precio" name="precio">
+                                 </div>
+      
+      
+      
+                                </form>
+      
+                              </div>
+      
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="GuardarPlatoCarta()">Save changes</button>
+                          </div>
+                        </div>
+                      </div>
+                  </div>           
+              <!-- Modal producto Nuevo Carta-->
+
+              <!-- Modal Modificar producto Carta -->
+           
+              <div class="modal" tabindex="-1" role="dialog" id="modal-modificarCarta-producto">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title modal-modificar-producto-title">Modificar Producto Carta </h5>
+                      
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body-modificar-producto">
+                        <div class="container">
+                        <form name="modificarCartaProductoForm">
+                            <div class="form-group">
+                              <small class="id-modificarCarta"></small>
+                            
+                                <label for="modificarCarta-categoria">Categoría</label>
+                                <select id="modificarCarta-categoria" class="form-control" name="modificarCarta-categoria">
+                                  <option selected>Escoge una</option>
+                                  <option>Entradas</option>
+                                  <option>Principio</option>
+                                  <option>Plato Fuerte</option>
+                                  <option>Bebidas</option>
+                                </select>
+                              </div>
+                            <div class="form-group">
+                                <label for="modificarCarta-nombrePlato">Nombre del Plato</label>
+                                <input type="text" class="form-control" id="modificarCarta-nombrePlato" placeholder="Nombre del Plato" name="modificarCarta-nombrePlato">
+                             </div>
+
+                             <div class="form-group">
+                                <label for="modificarCarta-descripcion">Descripción</label>
+                                <input type="text" class="form-control" id="modificarCarta-descripcion" placeholder="Descripción (Opcional)" name="modificarCarta-descripcion">
+                             </div>
+
+                             <div class="form-group">
+                              <label for="modificarCarta-precio">Precio</label>
+                              <input type="text" class="form-control" id="modificarCarta-precio" placeholder="Precio" name="modificarCarta-precio">
+                           </div>
+
+                       
+                            <div class="form-group">
+                            <label for="modificarCarta-estado">Estado</label>
+                            <select id="modificarCarta-estado" class="form-control" name="modificarCarta-estado">
+                              <option selected>activo</option>
+                              <option>inactivo</option>
+                            </select>
+
+                          </div>
+
+                          </form>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" onclick="UpdatePlatoCarta()" >Modificar plato</button>
+                      <button type="button" class="btn btn-danger" onclick="EliminarPlatoCarta()">Eliminar Plato</button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+
+        <!-- Modal Modificar producto Carta-->
+
 
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>

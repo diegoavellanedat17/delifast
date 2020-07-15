@@ -127,6 +127,45 @@ function VerificarExistenciarestaurante(){
   
             })
         }
+
+        var vista_carta=db.collection('carta').where("uid_restaurante","==",uid_restaurante)
+        vista_carta.get()
+        .then(function(querySnapshot){
+            if(querySnapshot.empty){
+                console.log("No hay productos de carta ")
+            }
+            else{
+                $(".user-items").append(`<h2 id="tituloAlmuerzos" class="col-12 text-center mt-5 mb-4" style=" color: #fef88f">CARTA</h2>`)
+                 
+                querySnapshot.forEach(function(doc){
+                    const categoria=doc.data().categoria
+                    const nombre=doc.data().nombre
+                    const descripcion=doc.data().descripcion
+                    const precio= doc.data().precio
+                    const estado= doc.data().estado
+                    console.log(doc.data())
+                    var categoriaFix = categoria.replace(/\s/g, '');
+    
+                    if(estado==='activo'){  
+                        if($(`#${categoriaFix}Carta`).length == 0) {
+                            //si no existe esa categoria debe crearse
+                        
+                            $(".user-items").append(`
+                            <div class="col-12 col-md-6" id="${categoriaFix}Carta">
+                                    <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
+                                    <h5  class="col-12 text-center platoMenu" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small> <small class="text-muted">${precio}</small></h5>
+                            </div>`
+                            )
+                        }
+    
+                        else{
+                            $(`#${categoriaFix}Carta`).append(`<h5  class="col-12 text-center platoMenu" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small> <small class="text-muted">${precio}</small></h5>`)
+                        }
+                    }
+                })
+    
+            }
+        })
         
     })
 }
@@ -490,9 +529,6 @@ firebase.auth().onAuthStateChanged(user => {
 });
 
 
-
-
-
 function GuardarInformacionCliente(name,email,password,dir,tel,userUid) {
 
 	console.log('Enviando a base de datos')
@@ -712,6 +748,8 @@ function GuardarPedido(pedido,uid_restaurante,user_uid) {
     
 
 }
+
+//Cambio de Direccion del usuario 
 
 function address(){
     console.log("cambiar direccion")
