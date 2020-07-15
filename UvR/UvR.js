@@ -35,7 +35,7 @@ function RedirijirUsuario(userData){
     .then(function(querySnapshot){
         if(querySnapshot.empty){
             console.log("No esta guardado en la base de datos")
-            window.location = '../test.html'//redirigiendo al html de prueba mientras miramos donde redireccionamos para realizar los pedidos
+            window.location = '../clientes/clientes.html'//redirigiendo al html de prueba mientras miramos donde redireccionamos para realizar los pedidos
         }
         else{
             querySnapshot.forEach(function(doc){
