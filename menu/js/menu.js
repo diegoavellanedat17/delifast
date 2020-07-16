@@ -106,7 +106,7 @@ function VerificarExistenciarestaurante(){
                 consulta_precio.get()
                 .then(function(querySnapshot){
                     querySnapshot.forEach(function(doc){
-                        const precio=doc.data().precio
+                        precio=doc.data().precio
                      
                         $(".user-items").append(`
                         
@@ -160,7 +160,7 @@ function VerificarExistenciarestaurante(){
 
                                         <div class="col-12 text-center">
                                             <small class="text-muted ">${descripcion}</small> 
-                                            <small class="text-muted ">${precio}</small>
+                                            <small class="text-muted precioEnCarta">${precio}</small>
                                         </div>
                                 </div>`
                                 ).insertAfter( "#tituloCarta" );
@@ -174,7 +174,7 @@ function VerificarExistenciarestaurante(){
 
                                         <div class="col-12 text-center">
                                             <small class="text-muted ">${descripcion}</small> 
-                                            <small class="text-muted ">${precio}</small>
+                                            <small class="text-muted precioEnCarta">${precio}</small>
                                         </div>
                                 </div>`)
                              }
@@ -187,7 +187,7 @@ function VerificarExistenciarestaurante(){
                             <h5  class="col-12 text-center platoMenu nombreEnCarta" style=" color: white" id="${doc.id}">${nombre}</h5>
                             <div class="col-12 text-center">
                                 <small class="text-muted ">${descripcion}</small> 
-                                <small class="text-muted ">${precio}</small>
+                                <small class="text-muted precioEnCarta">${precio}</small>
                             </div>
                             
                             `)
@@ -282,56 +282,6 @@ document.getElementById("button_pedir").addEventListener("click", function(){
     }
 })
 
-// function AlmuerzoDelDia(){
-//     numero_almuerzos=1;
-//     $(".almuerzoDia").empty()
-//     $(".btn-group").css("display","block")
-//     $(".EscogerPedido").css("display","none")
-//     $(".almuerzoDia").css("display","block")
-
-//     $(".almuerzoDia").append( `                  
-//     <div style="border-bottom: gray 1px solid;">
-//         <h5 id="almuerzoTitle">Almuerzo ${numero_almuerzos} </h5>
-//     </div>`)
-
- 
-   
-//     var categorias = $(".clase-categoria").map(function() { return this.id;});
-    
-//     var i;
-    
-//     for (i = 0; i < categorias.length; i++) { 
-
-//         $(".almuerzoDia").append( `
-               
-//                 <div class="form-group col-md-12 ${categorias[i]}${numero_almuerzos}">
-//                     <label for="input${categorias[i]}">${categorias[i]}</label>
-//                     <select id="input${categorias[i]}" class="form-control ${categorias[i]}${numero_almuerzos}class" name="${categorias[i]}${numero_almuerzos}">
-//                     </select>
-//                 </div> `)
-
-//                 var platoPorCategoria=$(`#${categorias[i]}`).find(".platoMenu").each(function(){
-//                     console.log($( this ).text())
-//                     $(`.${categorias[i]}${numero_almuerzos}class`).append(`<option>${$( this ).text()}</option>`)
-//                 })
-//      }
-
-//      $(".almuerzoDia").append( `   <div class="form-group col-md-12 notas">
-//      <label for="notas">Notas</label>
-//      <input type="notas" class="form-control" id="notas" placeholder="Notas">
-//         </select>
-//     </div> `)
-
-//      $(".ModalHacerPedido").css("display","none")
-//      $(".adicionarMenu").css("display","block")
-//      $(".quitarMenu").css("display","block")
-//      $(".atrasBoton").css("display","none")
-//      $(".modal-body-pedido").css("display","block")
-//      $(".hacerpedido").css("display","block")
-//      $(".enviarOrden").css("display","none") 
-//     $("#modal-pedido").modal()
-
-// }
 
 function AdicionarMenu(){
     $(".notas").remove()
@@ -364,7 +314,7 @@ function AdicionarMenu(){
                     
 
     if(numero_almuerzos>0 && $(".quitarMenu").length == 0){
-        $(`<button type="button" class="btn btn-outline-danger col-3 quitarMenu" onclick="QuitarMenu()">Quitar un Menú</button>`).insertAfter(".adicionarMenu")
+        $(`<button type="button" class="btn btn-outline-danger col-3 quitarMenu modalButton" onclick="QuitarMenu()">Quitar un Menú</button>`).insertAfter(".adicionarMenu")
     }
 
     if(numero_platos_carta!= 0 || numero_almuerzos!=0){
@@ -377,25 +327,27 @@ function AdicionarMenu(){
 }
 
 
-
-
 function AdicionarPlatoCarta(){
     // la idea es colocar un Dropdown menu con las opciones de platos de la carta
     var platosCartaID= $(".nombreEnCarta").map(function() { return this.id;});
     var platosCartaNombres= $(".nombreEnCarta").map(function() { return $( this ).text();});
+    var platosCartaPrecios= $(".precioEnCarta").map(function() { return $( this ).text();});
+    
     //se quitan las notas para ponerlas al final 
     $(".notas").remove();
     numero_platos_carta++;
+
     console.log(`El numero de almuerzos a la carta es ${numero_platos_carta}`)
     $(".PlatoDeLaCarta").append( `       <div style="border-bottom: gray 1px solid;" id="PlatoCarta${numero_platos_carta}">
             <label for="OpcionCarta${numero_platos_carta}" id="almuerzoTitle">Opción ${numero_platos_carta} de la carta</label>
-            <select id="OpcionCarta${numero_platos_carta}" class="form-control" name="OpcionCarta${numero_platos_carta}">
+            <select id="OpcionCarta${numero_platos_carta}" class="form-control" name="OpcionCarta${numero_platos_carta}" >
             </select>
         </div>`)
         var i;
+
         for (i = 0; i < platosCartaNombres.length; i++){
             $(`#OpcionCarta${numero_platos_carta}`).append( `                                
-              <option id="${platosCartaID[i]}">${platosCartaNombres[i]}</option>
+              <option id="${platosCartaPrecios[i]}">${platosCartaNombres[i]} </option>
 
              `)
         }
@@ -407,7 +359,7 @@ function AdicionarPlatoCarta(){
        </div> `)
 
        if(numero_platos_carta>0 && $(".quitarPlatoCarta").length == 0){
-        $(`<button type="button" class="btn btn-outline-danger col-3 quitarPlatoCarta" onclick="QuitarPlatoCarta()">Quitar Plato Carta</button>`).insertAfter(".adicionarMenuCarta")
+        $(`<button type="button" class="btn btn-outline-danger col-3 quitarPlatoCarta modalButton" onclick="QuitarPlatoCarta()">Quitar Plato Carta</button>`).insertAfter(".adicionarMenuCarta")
     }
 
     if(numero_platos_carta!= 0 || numero_almuerzos!=0){
@@ -479,6 +431,7 @@ function entrar(){
     $("#modal-usuario").modal()
 
 }
+
 
 
 
@@ -722,26 +675,63 @@ function HacerPedido(){
 
     console.log(`iterar pedido en ${numero_almuerzos}`)
 
-    $(".ModalHacerPedido").append(`
-    <h5>Resumen del pedido Menú</h5>
-    <table class="table table-sm TablaHacerPedido">
-    <thead>
-    <tr class="headerTablaHacerPedido">
+    if(numero_almuerzos >0){
+
+        $(".ModalHacerPedido").append(`
+        <h5>Resumen del pedido Menú</h5>
+        <table class="table table-sm TablaHacerPedido">
+        <thead>
+        <tr class="headerTablaHacerPedido">
+        
+        </tr>
+        </thead>
+
+        <tbody class="bodyTablaHacerPedido">
+
+
+        </tbody>
+
+
+        
+        `)
+        $(".headerTablaHacerPedido").empty()
+        
+        $(".headerTablaHacerPedido").append(`<th scope="col" >Tipo</th>`)
+
+        
+        var j;
+
+        for (j = 1; j <= numero_almuerzos; j++) { 
+            $(".bodyTablaHacerPedido").append(`  
+                                                <tr class="tablaAlmuerzo${j}">
+                                                    <th scope="row" >Almuerzo ${j} </th>
     
-    </tr>
-    </thead>
-
-    <tbody class="bodyTablaHacerPedido">
-
-
-    </tbody>
-
-
+                                                </tr>
+                                                `)
+        }
     
-    `)
-    $(".headerTablaHacerPedido").empty()
-    
-    $(".headerTablaHacerPedido").append(`<th scope="col" >Tipo</th>`)
+        var i;
+
+        for (i = 0; i < categorias.length; i++) { 
+            $(".headerTablaHacerPedido").append(`<th scope="col">${categorias[i]}</th>`)
+            
+
+            var j;
+
+            for (j = 1; j <= numero_almuerzos; j++) { 
+                
+
+                var valueTable=document.forms["PedidoForm"][`${categorias[i]}${j}`].value
+                $(`.tablaAlmuerzo${j}`).append(`
+                                                <td > ${valueTable} </td>
+                                                `
+                    )
+            }
+
+
+        }
+
+    }
 
     if(numero_platos_carta>0){
         $(".ModalHacerPedido").append(`
@@ -769,62 +759,49 @@ function HacerPedido(){
 
         //Recorrer todas las opciones y ponerlas como rows
         PlatosCartaPedidos=[]
-        
+        PlatosCartaPrecios=[]
         var i;
         for(i = 1; i <= numero_platos_carta; i++){
+
+        
+
             var PlatoCartaValue=document.forms["PedidoForm"][`OpcionCarta${i}`].value
+
             PlatosCartaPedidos.push(PlatoCartaValue)
-            console.log(PlatosCartaPedidos)
+
+            //Array de precios
+
+            var SelectedDelForm = document.getElementById(`OpcionCarta${i}`);
+            var PlatoHijoSeleccionado = SelectedDelForm.options[SelectedDelForm.selectedIndex].id;
+            PlatosCartaPrecios.push(PlatoHijoSeleccionado)
+            
         }
 
+        //Pasar a Entero 
+
+        for(var i=0; i<PlatosCartaPrecios.length;i++) PlatosCartaPrecios[i] = parseInt(PlatosCartaPrecios[i], 10);
+
+        console.log(PlatosCartaPrecios)
+        // Total de platos de la carta 
+      
+        var total_platos_carta = PlatosCartaPrecios.reduce((a, b) => a + b, 0)
+          
         $(".bodyTablaHacerPedidoCarta").append(`  
         <tr >
             <th scope="row" >Carta </th>
-            <th id="PedidoDeCarta">${PlatosCartaPedidos} </th>
+            <td id="PedidoDeCarta">${PlatosCartaPedidos} </td>
         </tr>
         `)
-    }
-    
-    
-    
-    
-
-    var j;
-
-    for (j = 1; j <= numero_almuerzos; j++) { 
-         $(".bodyTablaHacerPedido").append(`  
-                                            <tr class="tablaAlmuerzo${j}">
-                                                <th scope="row" >Almuerzo ${j} </th>
-  
-                                            </tr>
-                                            `)
-    }
-  
-    var i;
-
-    for (i = 0; i < categorias.length; i++) { 
-         $(".headerTablaHacerPedido").append(`<th scope="col">${categorias[i]}</th>`)
-        
-
-        var j;
-
-        for (j = 1; j <= numero_almuerzos; j++) { 
-             
-
-            var valueTable=document.forms["PedidoForm"][`${categorias[i]}${j}`].value
-            $(`.tablaAlmuerzo${j}`).append(`
-                                            <td > ${valueTable} </td>
-                                            `
-                )
-        }
-
 
     }
+
+    const precio_menus=precio*numero_almuerzos
+    const granTotal=precio_menus+total_platos_carta
+    $( `<p class="totalPagar">Total</p> <small class="GranTotal">${granTotal}</small>`).insertAfter( ".TablaHacerPedidoCarta" );
+
     var notas=document.forms["PedidoForm"][`notas`].value
-
-
     if(notas!=""){
-    $( `<p>Notas</p> <small>${notas}</small>`).insertAfter( ".TablaHacerPedido" );
+    $( `<p>Notas</p> <small>${notas}</small>`).insertAfter( ".totalPagar" );
 
     }
 
@@ -860,10 +837,14 @@ function EnviarOrden(){
         querySnapshot.forEach(function(doc){
             var direccion= doc.data().dir
             var telefono= doc.data().tel
+            var nombre_cliente= doc.data().nombre
+            pedido['nombre']=nombre_cliente
             pedido['tel']=telefono
             pedido['dir']=direccion
+            
             var PedidoDeCarta=$("#PedidoDeCarta").text()
             var PedidoDeCarta = PedidoDeCarta.split(',');
+            var totalpagar=$(".GranTotal").text()
             //se tendrá un array con el nombre de la categoria que tenga la orden 
             var categorias = $(".clase-categoria").map(function() { return this.id;});
             var categoriaPedido=[]
@@ -890,6 +871,7 @@ function EnviarOrden(){
             pedido['notas']=notas
             pedido['hora_pedido']=Date.now()
             pedido['estado']='ordenado'
+            pedido['total']=totalpagar
 
             
 

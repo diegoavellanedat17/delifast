@@ -31,6 +31,7 @@ var firebaseConfig = {
     })
     
 }
+// para filtrar
 
 
 $(".pedidos").click(function(){
@@ -56,6 +57,13 @@ $(".pedidos").click(function(){
         var audio = new Audio('./sounds/notification.mp3')
         audio.play()
         $(".user-items").empty()
+
+        $(".user-items").append(`
+                <div class="input-group input-group-sm mb-3 mt-2 ">
+
+                    <input type="text" id="FitrarPedidos"class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Escribe para filtrar cualquier categoria">
+                </div>`
+      )
         $(".user-items").append(`
         <div class="table-responsive">
                 <table class="table table-hover table table-bordered">
@@ -63,12 +71,14 @@ $(".pedidos").click(function(){
                                 <tr class="TablaPedidosHeader">
                                     <th scope="col">Hora</th>
                                     <th scope="col">Pedido</th>
+                                    <th scope="col">Nombre</th>
                                     <th scope="col">Dirección</th>
                                     <th scope="col">Notas</th>
+                                    <th scope="col">Precio</th>
                                     <th scope="col">Estado</th>
                                 </tr>
                                 </thead>
-                                <tbody class="TablaPedidosBody">
+                                <tbody class="TablaPedidosBody" >
                                 </tbody>
                 </table>
                 
@@ -80,7 +90,10 @@ $(".pedidos").click(function(){
             var PrincipioPedido=doc.data().Principio
             var PlatoFuertePedido=doc.data().PlatoFuerte
             var BebidasPedido=doc.data().Bebidas
+            var PedidoCarta=doc.data().carta
+            var nombreCliente=doc.data().nombre
             const hora_pedido=doc.data().hora_pedido
+            const total=doc.data().total
             const direccion=doc.data().dir
             const notas=doc.data().notas
             const estado=doc.data().estado
@@ -193,9 +206,33 @@ $(".pedidos").click(function(){
                 
             }
 
-            $(`#${doc.id}`).append(`<td ><small>${direccion}</small></td>
+            if(PedidoCarta != undefined && PedidoCarta != ""){
+
+                $(`#${doc.id}pedido`).append(`
+                <div class="row">
+                    <div class="col-12" style="border-bottom: solid 1px #e8e8e8;">
+                        <p>Carta:  <small>${PedidoCarta}</small></p>
+                    </div>
+                </div>
+                `)
+            }
+
+            $(`#${doc.id}`).append(`<td ><small>${nombreCliente}</small></td>
+                                    <td ><small>${direccion}</small></td>
                                     <td ><small>${notas}</small></td>
+                                    <td ><small>${total}</small></td>
                                     <td ><small>${estado}</small></td>`)
+
+            // para la tabla de filtrado
+
+            $(document).ready(function(){
+                    $("#FitrarPedidos").on("keyup", function() {
+                     var value = $(this).val().toLowerCase();
+                    $(".TablaPedidosBody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                            });
+                    });                            
 
 
         })
@@ -256,6 +293,13 @@ $(".clients").click(function(){
     $(".user-items").css("background-color","white")
     $(".user-items").empty()
     $(".menuDia").empty()
+
+    $(".user-items").append(`
+    <div class="input-group input-group-sm mb-3 mt-2 ">
+
+        <input type="text" id="FitrarClientes"class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Escribe para filtrar cualquier categoria">
+    </div>`
+)
     // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
     if(entra_consulta!=0){
@@ -332,6 +376,17 @@ $(".clients").click(function(){
                         }
                     })
                     })
+
+         // para la tabla de filtrado
+            
+            $(document).ready(function(){
+                $("#FitrarClientes").on("keyup", function() {
+                 var value = $(this).val().toLowerCase();
+                $(".TablaClientesBody tr").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                        });
+                });    
             
         })
    
@@ -362,11 +417,18 @@ $(".menu").click(function(){
     $(".user-items").css("background-color","white")
     console.log("menu")
     $(".user-items").empty()
+   
     $(".user-items").append(`              
     <button type="button" class="btn btn-outline-secondary col-12 col-md-3 mt-3 ml-3"  onClick="AdicionarProducto()" >Adicionar Plato</button>
     <a href="#" class="btn btn btn-outline-warning col-12 col-md-3 mt-3 ml-3 " onClick="PrecioMenu()" > Precio del Menú</a>
     <a href="#" class="btn btn-outline-success col-12 col-md-3 mt-3 ml-3 " onClick="VistaMenu()" > Vista del Menú</a>
     `)
+    $(".user-items").append(`
+    <div class="input-group input-group-sm mb-3 mt-4 ">
+
+        <input type="text" id="FitrarMenu"class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Escribe para filtrar cualquier categoria">
+    </div>`
+    )
     MostrarMenuActual()
 });
 
@@ -387,6 +449,13 @@ $(".carta").click(function(){
     <button type="button" class="btn btn-outline-secondary col-12  mt-3 ml-3"  onClick="AdicionarProductoCarta()" >Adicionar Plato Carta</button>
 
     `)
+
+    $(".user-items").append(`
+    <div class="input-group input-group-sm mb-3 mt-4 ">
+
+        <input type="text" id="FitrarCarta"class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm" placeholder="Escribe para filtrar cualquier categoria">
+    </div>`
+    )
     MostrarCartaActual()
 
 })
@@ -816,6 +885,17 @@ function MostrarMenuActual(){
         </tr>
         
         `)
+
+        // para la tabla de filtrado
+            
+        $(document).ready(function(){
+            $("#FitrarMenu").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".menu-item-body tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+                });
+            }); 
         
         });
     });
@@ -940,7 +1020,7 @@ function MostrarCartaActual(){
                                 
                                 </tr>
                                 </thead>
-                                <tbody class="menu-item-body">
+                                <tbody class="carta-item-body">
                                 </tbody>
                 </table>
                 
@@ -953,7 +1033,7 @@ function MostrarCartaActual(){
         const precio=doc.data().precio
         const estado=doc.data().estado
        
-        $(".menu-item-body").append(`
+        $(".carta-item-body").append(`
         <tr id="${doc.id}" onClick="Click_modificarCarta(this.id)" class="item_product"> 
             <td class="${categoria}TablaMenu">${categoria}</td>
             <td>${nombrePlato}</td>
@@ -964,6 +1044,15 @@ function MostrarCartaActual(){
         </tr>
         
         `)
+
+        $(document).ready(function(){
+            $("#FitrarCarta").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".carta-item-body tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+                });
+            });
         
         });
     });
