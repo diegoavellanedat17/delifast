@@ -77,10 +77,15 @@
           <div class="modal-body-pedido">
               <div class="container modalToHide">
               <form name="PedidoForm">
+
                 <div class="almuerzoDia"> 
 
+                </div>
+
+                <div class="PlatoDeLaCarta"> 
 
                 </div>
+                
 
                 </form>
 
@@ -88,21 +93,24 @@
 
           </div>
 
-          <div class="modal-hacerPedido">
+         
             <div class="container ModalHacerPedido">
               
               
           </div>
 
-            <div class="modal-footer modal_pedidos">
-              <button type="button" class="btn btn-secondary cerrar" data-dismiss="modal">Cerrar</button>
-              <button type="button" class="btn btn-primary adicionarMenu" onclick="AdicionarMenu()">Adicionar Menú</button>
-              <button type="button" class="btn btn-primary hacerpedido" onclick="HacerPedido()">Hacer Pedido</button>
+            <div class="modal-footer row" >
+              <div class="btn-group col-12" role="group" aria-label="Basic example" style="border: green 1px solid;">
+                <button type="button" class="btn btn-secondary cerrar col-6 modalButton"  data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary adicionarMenu col-3 modalButton" onclick="AdicionarMenu()">Adicionar Menú</button>
+                <button type="button" class="btn btn-primary adicionarMenuCarta col-3 modalButton" onclick="AdicionarPlatoCarta()">Adicionar Plato de la Carta</button>
+                <button type="button" class="btn btn-primary hacerpedido col-3 modalButton" onclick="HacerPedido()">Hacer Pedido</button>
+              </div>
             </div>
-          </div>
         </div>
       </div>
-    </div>
+      </div>
+    
  
     <!-- Modal Hacer Pedido-->
     

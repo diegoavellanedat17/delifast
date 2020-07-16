@@ -13,7 +13,8 @@ var firebaseConfig = {
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   var db = firebase.firestore();
-  numero_almuerzos=1;
+  numero_almuerzos=0;
+  numero_platos_carta=0;
 
 
 VerificarExistenciarestaurante()
@@ -135,7 +136,7 @@ function VerificarExistenciarestaurante(){
                 console.log("No hay productos de carta ")
             }
             else{
-                $(".user-items").append(`<h2 id="tituloAlmuerzos" class="col-12 text-center mt-5 mb-4" style=" color: #fef88f">CARTA</h2>`)
+                $(".user-items").append(`<h2 id="tituloCarta" class="col-12 text-center mt-5 mb-4" style=" color: #fef88f">CARTA</h2>`)
                  
                 querySnapshot.forEach(function(doc){
                     const categoria=doc.data().categoria
@@ -143,23 +144,53 @@ function VerificarExistenciarestaurante(){
                     const descripcion=doc.data().descripcion
                     const precio= doc.data().precio
                     const estado= doc.data().estado
-                    console.log(doc.data())
+                   
                     var categoriaFix = categoria.replace(/\s/g, '');
     
                     if(estado==='activo'){  
                         if($(`#${categoriaFix}Carta`).length == 0) {
                             //si no existe esa categoria debe crearse
                         
-                            $(".user-items").append(`
-                            <div class="col-12 col-md-6" id="${categoriaFix}Carta">
-                                    <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
-                                    <h5  class="col-12 text-center platoMenu" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small> <small class="text-muted">${precio}</small></h5>
-                            </div>`
-                            )
+                            if (categoriaFix === 'Entradas' || categoriaFix === 'Principio'){
+
+                                $(`
+                                <div class="col-12 col-md-6" id="${categoriaFix}Carta">
+                                        <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
+                                        <h5  class="col-12 text-center platoMenu nombreEnCarta" style=" color: white" id="${doc.id}">${nombre}</h5>
+
+                                        <div class="col-12 text-center">
+                                            <small class="text-muted ">${descripcion}</small> 
+                                            <small class="text-muted ">${precio}</small>
+                                        </div>
+                                </div>`
+                                ).insertAfter( "#tituloCarta" );
+
+                            }
+                            else{
+                                $(".user-items").append(`
+                                <div class="col-12 col-md-6" id="${categoriaFix}Carta">
+                                        <h5 id="titulocategoria" class="col-12 text-center" style="color: #fef88f">${categoria}</h5>
+                                        <h5  class="col-12 text-center platoMenu nombreEnCarta" style=" color: white" id="${doc.id}">${nombre}</h5>
+
+                                        <div class="col-12 text-center">
+                                            <small class="text-muted ">${descripcion}</small> 
+                                            <small class="text-muted ">${precio}</small>
+                                        </div>
+                                </div>`)
+                             }
+                        
+
                         }
     
                         else{
-                            $(`#${categoriaFix}Carta`).append(`<h5  class="col-12 text-center platoMenu" style=" color: white">${nombre}<br> <small class="text-muted">${descripcion}</small> <small class="text-muted">${precio}</small></h5>`)
+                            $(`#${categoriaFix}Carta`).append(`
+                            <h5  class="col-12 text-center platoMenu nombreEnCarta" style=" color: white" id="${doc.id}">${nombre}</h5>
+                            <div class="col-12 text-center">
+                                <small class="text-muted ">${descripcion}</small> 
+                                <small class="text-muted ">${precio}</small>
+                            </div>
+                            
+                            `)
                         }
                     }
                 })
@@ -187,10 +218,12 @@ function VerificarDia(){
 //Cuando quieran realizar un pedido
 
 document.getElementById("button_pedir").addEventListener("click", function(){
+    numero_almuerzos = 0
+    numero_platos_carta = 0
     //debe decidirse cual modal mostrar si el de realizar pedido o realizar atenticación, esto depende si hay usuario o no 
     var user = firebase.auth().currentUser;
     console.log(user)
-    numero_almuerzos=1;
+    
     if(user === null){
         $("#modal-usuario").modal()
     }
@@ -206,52 +239,37 @@ document.getElementById("button_pedir").addEventListener("click", function(){
 
             }
             querySnapshot.forEach(function(doc){
-                if(numero_almuerzos === 1){
+
+                if(numero_almuerzos === 0){
                     $(".quitarMenu").remove()
                 }
+
+                if(numero_platos_carta === 0){
+                    $(".quitarPlatoCarta").remove()
+                }
+                if(numero_platos_carta=== 0 && numero_almuerzos===0){
+                    $(".notas").remove()
+                    $(".hacerpedido").css("display","none")
+                }
+                
                 
                 const tipo=doc.data().tipo
                 console.log(tipo)
-                $(".almuerzoDia").empty()
-                    $(".almuerzoDia").append( `                  <div style="border-bottom: gray 1px solid;">
-                <h5 id="almuerzoTitle">Almuerzo ${numero_almuerzos} </h5>
-                    </div>`)
+
                 
                 if(tipo==='cliente'){
-                    var categorias = $(".clase-categoria").map(function() { return this.id;});
-                    console.log(categorias[0])
-                    var i;
-                    
-                    for (i = 0; i < categorias.length; i++) { 
-
-                        $(".almuerzoDia").append( `
-                               
-                                <div class="form-group col-md-12 ${categorias[i]}${numero_almuerzos}">
-                                    <label for="input${categorias[i]}">${categorias[i]}</label>
-                                    <select id="input${categorias[i]}" class="form-control ${categorias[i]}${numero_almuerzos}class" name="${categorias[i]}${numero_almuerzos}">
-                                    </select>
-                                </div> `)
-
-                                var platoPorCategoria=$(`#${categorias[i]}`).find(".platoMenu").each(function(){
-                                    console.log($( this ).text())
-                                    $(`.${categorias[i]}${numero_almuerzos}class`).append(`<option>${$( this ).text()}</option>`)
-                                })
-                     }
-
-                     $(".almuerzoDia").append( `   <div class="form-group col-md-12 notas">
-                     <label for="notas">Notas</label>
-                     <input type="notas" class="form-control" id="notas" placeholder="Notas">
-                        </select>
-                    </div> `)
-
-                     $(".ModalHacerPedido").css("display","none")
-                     $(".adicionarMenu").css("display","block")
-                     $(".quitarMenu").css("display","block")
-                     $(".atrasBoton").css("display","none")
-                     $(".modal-body-pedido").css("display","block")
-                     $(".hacerpedido").css("display","block")
-                     $(".enviarOrden").css("display","none") 
+                    $(".modal-body-pedido").css("display","block")
+                    $(".btn-group").css("display","block")
+                    $(".atrasBoton").remove()
+                    $(".enviarOrden").remove()
+                    $(".almuerzoDia").empty()
+                    $(".PlatoDeLaCarta").empty()
+                   
+                    $(".ModalHacerPedido").empty()
                     $("#modal-pedido").modal()
+                    $(".adicionarMenuCarta").css("display","block")
+                    $(".adicionarMenu").css("display","block")
+
                 }
                 else{
                     alert("Comunicate con nosotros en delifast")
@@ -262,6 +280,57 @@ document.getElementById("button_pedir").addEventListener("click", function(){
         })
     }
 })
+
+// function AlmuerzoDelDia(){
+//     numero_almuerzos=1;
+//     $(".almuerzoDia").empty()
+//     $(".btn-group").css("display","block")
+//     $(".EscogerPedido").css("display","none")
+//     $(".almuerzoDia").css("display","block")
+
+//     $(".almuerzoDia").append( `                  
+//     <div style="border-bottom: gray 1px solid;">
+//         <h5 id="almuerzoTitle">Almuerzo ${numero_almuerzos} </h5>
+//     </div>`)
+
+ 
+   
+//     var categorias = $(".clase-categoria").map(function() { return this.id;});
+    
+//     var i;
+    
+//     for (i = 0; i < categorias.length; i++) { 
+
+//         $(".almuerzoDia").append( `
+               
+//                 <div class="form-group col-md-12 ${categorias[i]}${numero_almuerzos}">
+//                     <label for="input${categorias[i]}">${categorias[i]}</label>
+//                     <select id="input${categorias[i]}" class="form-control ${categorias[i]}${numero_almuerzos}class" name="${categorias[i]}${numero_almuerzos}">
+//                     </select>
+//                 </div> `)
+
+//                 var platoPorCategoria=$(`#${categorias[i]}`).find(".platoMenu").each(function(){
+//                     console.log($( this ).text())
+//                     $(`.${categorias[i]}${numero_almuerzos}class`).append(`<option>${$( this ).text()}</option>`)
+//                 })
+//      }
+
+//      $(".almuerzoDia").append( `   <div class="form-group col-md-12 notas">
+//      <label for="notas">Notas</label>
+//      <input type="notas" class="form-control" id="notas" placeholder="Notas">
+//         </select>
+//     </div> `)
+
+//      $(".ModalHacerPedido").css("display","none")
+//      $(".adicionarMenu").css("display","block")
+//      $(".quitarMenu").css("display","block")
+//      $(".atrasBoton").css("display","none")
+//      $(".modal-body-pedido").css("display","block")
+//      $(".hacerpedido").css("display","block")
+//      $(".enviarOrden").css("display","none") 
+//     $("#modal-pedido").modal()
+
+// }
 
 function AdicionarMenu(){
     $(".notas").remove()
@@ -286,23 +355,91 @@ function AdicionarMenu(){
                                     $(`.${categorias[i]}${numero_almuerzos}class`).append(`<option>${$( this ).text()}</option>`)
                                 })
                      }
-                     $(".almuerzoDia").append( `   <div class="form-group col-md-12 notas">
+                     $(".PlatoDeLaCarta").append( `   <div class="form-group col-md-12 notas">
                      <label for="notas">Notas</label>
                      <input type="notas" class="form-control" id="notas" placeholder="Notas">
                         </select>
                     </div> `)
                     
 
-    if(numero_almuerzos>1 && $(".quitarMenu").length == 0){
+    if(numero_almuerzos>0 && $(".quitarMenu").length == 0){
         $(`<button type="button" class="btn btn-outline-danger quitarMenu" onclick="QuitarMenu()">Quitar un Menú</button>`).insertAfter(".adicionarMenu")
     }
 
-console.log(`El numero de almuerzos es ${numero_almuerzos}`)
+    if(numero_platos_carta!= 0 || numero_almuerzos!=0){
+   
+        $(".hacerpedido").css("display","block")
+    }
+
+    console.log(`El numero de almuerzos es ${numero_almuerzos}`)
+
+}
+
+
+
+
+function AdicionarPlatoCarta(){
+    // la idea es colocar un Dropdown menu con las opciones de platos de la carta
+    var platosCartaID= $(".nombreEnCarta").map(function() { return this.id;});
+    var platosCartaNombres= $(".nombreEnCarta").map(function() { return $( this ).text();});
+    //se quitan las notas para ponerlas al final 
+    $(".notas").remove();
+    numero_platos_carta++;
+    console.log(`El numero de almuerzos a la carta es ${numero_platos_carta}`)
+    $(".PlatoDeLaCarta").append( `       <div style="border-bottom: gray 1px solid;" id="PlatoCarta${numero_platos_carta}">
+            <label for="OpcionCarta${numero_platos_carta}" id="almuerzoTitle">Opción ${numero_platos_carta} de la carta</label>
+            <select id="OpcionCarta${numero_platos_carta}" class="form-control" name="OpcionCarta${numero_platos_carta}">
+            </select>
+        </div>`)
+        var i;
+        for (i = 0; i < platosCartaNombres.length; i++){
+            $(`#OpcionCarta${numero_platos_carta}`).append( `                                
+              <option id="${platosCartaID[i]}">${platosCartaNombres[i]}</option>
+
+             `)
+        }
+
+        $(".PlatoDeLaCarta").append( `   <div class="form-group col-md-12 notas">
+        <label for="notas">Notas</label>
+        <input type="notas" class="form-control" id="notas" placeholder="Notas">
+           </select>
+       </div> `)
+
+       if(numero_platos_carta>0 && $(".quitarPlatoCarta").length == 0){
+        $(`<button type="button" class="btn btn-outline-danger quitarPlatoCarta" onclick="QuitarPlatoCarta()">Quitar Plato Carta</button>`).insertAfter(".adicionarMenuCarta")
+    }
+
+    if(numero_platos_carta!= 0 || numero_almuerzos!=0){
+   
+        $(".hacerpedido").css("display","block")
+    }
+    
+}
+
+function QuitarPlatoCarta(){
+
+    if (numero_platos_carta >=1){
+
+                    $(`#PlatoCarta${numero_platos_carta}`).remove()
+                    console.log(`El numero de Carta quitado es ${numero_platos_carta}`)
+                    numero_platos_carta--;
+    }
+
+    if(numero_platos_carta === 0){
+        $(".quitarPlatoCarta").remove()
+    } 
+
+    if(numero_platos_carta=== 0 && numero_almuerzos===0){
+        $(".notas").remove()
+        $(".hacerpedido").css("display","none")
+    }
+
+
 }
 
 function QuitarMenu(){
     
-    if (numero_almuerzos > 1){
+    if (numero_almuerzos >= 1){
 
         var categorias = $(".clase-categoria").map(function() { return this.id;});
                     var i;
@@ -315,9 +452,16 @@ function QuitarMenu(){
         numero_almuerzos--;
     }
 
-    if(numero_almuerzos === 1){
+    if(numero_almuerzos === 0){
         $(".quitarMenu").remove()
     }
+
+    if(numero_platos_carta=== 0 && numero_almuerzos===0){
+        $(".notas").remove()
+        $(".hacerpedido").css("display","none")
+
+    }
+ 
 }
 
 // Cerrar sesión
@@ -490,7 +634,7 @@ firebase.auth().onAuthStateChanged(user => {
     $(".user-dropdown").empty()
     $(".user-dropdown").append(
     `
-    <button class="dropdown-item" onClick="logout()"><i class="material-icons icon">mylo</i>Salir</button>
+    <button class="dropdown-item" onClick="logout()"><i class="material-icons icon">logout</i>Salir</button>
     <button class="dropdown-item" onClick="user_dashboard()"><i class="material-icons icon">restaurant_menu</i>Mis Pedidos</button>
     <button class="dropdown-item" onClick="address()"><i class="material-icons icon">my_location</i>Cambiar dirección</button>
     
@@ -528,6 +672,9 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
+function user_dashboard(){
+    window.location = '../clientes/clientes.html'
+}
 
 function GuardarInformacionCliente(name,email,password,dir,tel,userUid) {
 
@@ -564,13 +711,18 @@ function HacerPedido(){
     $(".quitarMenu").css("display","none")
     $(".atrasBoton").css("display","block")
     $(".hacerpedido").css("display","none")
+    $(".adicionarMenuCarta").css("display","none")
+    $(".quitarPlatoCarta").css("display","none")
+    
     $(".enviarOrden").css("display","block")
     
     $(".ModalHacerPedido").css("display","block")
     $(".ModalHacerPedido").empty()
+
     console.log(`iterar pedido en ${numero_almuerzos}`)
+
     $(".ModalHacerPedido").append(`
-    <h5>Resumen del pedido</h5>
+    <h5>Resumen del pedido Menú</h5>
     <table class="table table-sm TablaHacerPedido">
     <thead>
     <tr class="headerTablaHacerPedido">
@@ -584,9 +736,57 @@ function HacerPedido(){
     </tbody>
 
 
-    </table>`)
+    
+    `)
     $(".headerTablaHacerPedido").empty()
+    
     $(".headerTablaHacerPedido").append(`<th scope="col" >Tipo</th>`)
+
+    if(numero_platos_carta>0){
+        $(".ModalHacerPedido").append(`
+        </table>
+            <h5>Resumen del pedido Carta</h5>
+            <table class="table table-sm TablaHacerPedidoCarta">
+            <thead>
+            <tr class="headerTablaHacerPedidoCarta">
+            
+            </tr>
+            </thead>
+
+            <tbody class="bodyTablaHacerPedidoCarta">
+
+
+            </tbody>
+
+        </table>
+        
+        `)
+        $(".headerTablaHacerPedidoCarta").empty()
+        $(".headerTablaHacerPedidoCarta").append(`
+                <th scope="col" >Tipo</th>
+                <th scope="col" >Pedido de Carta</th>`)
+
+        //Recorrer todas las opciones y ponerlas como rows
+        PlatosCartaPedidos=[]
+        
+        var i;
+        for(i = 1; i <= numero_platos_carta; i++){
+            var PlatoCartaValue=document.forms["PedidoForm"][`OpcionCarta${i}`].value
+            PlatosCartaPedidos.push(PlatoCartaValue)
+            console.log(PlatosCartaPedidos)
+        }
+
+        $(".bodyTablaHacerPedidoCarta").append(`  
+        <tr >
+            <th scope="row" >Carta </th>
+            <th id="PedidoDeCarta">${PlatosCartaPedidos} </th>
+        </tr>
+        `)
+    }
+    
+    
+    
+    
 
     var j;
 
@@ -639,6 +839,8 @@ function Atras(){
     $(".atrasBoton").css("display","none") 
     $(".enviarOrden").css("display","none") 
     $(".hacerpedido").css("display","block")
+    $(".adicionarMenuCarta").css("display","block")
+    $(".quitarPlatoCarta").css("display","block")
 
     $(".ModalHacerPedido").css("display","none")
 }
@@ -658,6 +860,8 @@ function EnviarOrden(){
             var telefono= doc.data().tel
             pedido['tel']=telefono
             pedido['dir']=direccion
+            var PedidoDeCarta=$("#PedidoDeCarta").text()
+            var PedidoDeCarta = PedidoDeCarta.split(',');
             //se tendrá un array con el nombre de la categoria que tenga la orden 
             var categorias = $(".clase-categoria").map(function() { return this.id;});
             var categoriaPedido=[]
@@ -678,7 +882,7 @@ function EnviarOrden(){
                 pedido[`${categorias[i]}`] = auxiliar_array;
             }
 
-
+            pedido['carta']=PedidoDeCarta
             pedido['uid_cliente']=user.uid
             pedido['uid_restaurante']=uid_restaurante
             pedido['notas']=notas
@@ -734,9 +938,9 @@ function GuardarPedido(pedido,uid_restaurante,user_uid) {
                     .catch(function(err){
                         console.log(err)
                     })
-                    }
+                }
 
-                    })
+            })
             
     })
     })
