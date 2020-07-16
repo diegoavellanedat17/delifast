@@ -258,6 +258,7 @@ document.getElementById("button_pedir").addEventListener("click", function(){
 
                 
                 if(tipo==='cliente'){
+                    $(".modalToHide").css("display","block")
                     $(".modal-body-pedido").css("display","block")
                     $(".btn-group").css("display","block")
                     $(".atrasBoton").remove()
@@ -363,7 +364,7 @@ function AdicionarMenu(){
                     
 
     if(numero_almuerzos>0 && $(".quitarMenu").length == 0){
-        $(`<button type="button" class="btn btn-outline-danger quitarMenu" onclick="QuitarMenu()">Quitar un Menú</button>`).insertAfter(".adicionarMenu")
+        $(`<button type="button" class="btn btn-outline-danger col-3 quitarMenu" onclick="QuitarMenu()">Quitar un Menú</button>`).insertAfter(".adicionarMenu")
     }
 
     if(numero_platos_carta!= 0 || numero_almuerzos!=0){
@@ -406,7 +407,7 @@ function AdicionarPlatoCarta(){
        </div> `)
 
        if(numero_platos_carta>0 && $(".quitarPlatoCarta").length == 0){
-        $(`<button type="button" class="btn btn-outline-danger quitarPlatoCarta" onclick="QuitarPlatoCarta()">Quitar Plato Carta</button>`).insertAfter(".adicionarMenuCarta")
+        $(`<button type="button" class="btn btn-outline-danger col-3 quitarPlatoCarta" onclick="QuitarPlatoCarta()">Quitar Plato Carta</button>`).insertAfter(".adicionarMenuCarta")
     }
 
     if(numero_platos_carta!= 0 || numero_almuerzos!=0){
@@ -702,11 +703,11 @@ function HacerPedido(){
     var categorias = $(".clase-categoria").map(function() { return this.id;});
 
     if($(".atrasBoton").length == 0){
-        $(`<button type="button" class="btn btn-outline-danger atrasBoton" onclick="Atras()">Atras</button>`).insertAfter(".cerrar")
-        $(`<button type="button" class="btn btn-primary enviarOrden" onclick="EnviarOrden()">Enviar Orden</button>`).insertAfter(".cerrar")
+        $(`<button type="button" class="btn btn-outline-danger col-3 atrasBoton" onclick="Atras()">Atras</button>`).insertAfter(".cerrar")
+        $(`<button type="button" class="btn btn-primary col-3 enviarOrden" onclick="EnviarOrden()">Enviar Orden</button>`).insertAfter(".cerrar")
     }
 
-    $(".modal-body-pedido").css("display","none")
+    $(".modalToHide").css("display","none")
     $(".adicionarMenu").css("display","none")
     $(".quitarMenu").css("display","none")
     $(".atrasBoton").css("display","block")
@@ -833,6 +834,7 @@ function HacerPedido(){
 }
 
 function Atras(){
+    $(".modalToHide").css("display","block")
     $(".modal-body-pedido").css("display","block")
     $(".adicionarMenu").css("display","block")
     $(".quitarMenu").css("display","block")

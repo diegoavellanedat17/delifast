@@ -87,26 +87,25 @@
                 </div>
                 
 
-                </form>
+                
+              </form>
 
+              </div>
+
+
+              <div class="container ModalHacerPedido">
               </div>
 
           </div>
 
-         
-            <div class="container ModalHacerPedido">
-              
-              
-          </div>
-
-            <div class="modal-footer row" >
-              <div class="btn-group col-12" role="group" aria-label="Basic example" style="border: green 1px solid;">
-                <button type="button" class="btn btn-secondary cerrar col-6 modalButton"  data-dismiss="modal">Cerrar</button>
+          <div class="modal-footer" style="border: green 1px solid;">
+           <div class="row">
+                <button type="button" class="btn btn-secondary cerrar col-3 modalButton"  data-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-primary adicionarMenu col-3 modalButton" onclick="AdicionarMenu()">Adicionar Menú</button>
                 <button type="button" class="btn btn-primary adicionarMenuCarta col-3 modalButton" onclick="AdicionarPlatoCarta()">Adicionar Plato de la Carta</button>
                 <button type="button" class="btn btn-primary hacerpedido col-3 modalButton" onclick="HacerPedido()">Hacer Pedido</button>
-              </div>
             </div>
+          </div>
         </div>
       </div>
       </div>
@@ -243,6 +242,8 @@
         $(".register-form").css("display","none")
         $(".modal-producto-title").empty()
         $(".modal-producto-title").append("Olvidaste la contraseña")
+
+
       });
     </script> 
 
