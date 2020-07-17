@@ -31,7 +31,39 @@ var firebaseConfig = {
     })
     
 }
-// para filtrar
+
+
+// mirar si existe el logo, si no seguir 
+function PlaceLogo(){
+    var storageRef = firebase.storage().ref();
+    var user = firebase.auth().currentUser;
+    
+    var nombreRestaurante=user.displayName
+    var LogoRef = storageRef.child(`${nombreRestaurante}/logo.png`);
+
+    // Get the download URL
+    LogoRef.getDownloadURL().then(function(url) {
+    // Insert url into an <img> tag to "download"
+        var xhr = new XMLHttpRequest();
+                    xhr.responseType = 'blob';
+                    xhr.onload = function(event) {
+                    var blob = xhr.response;
+                    };
+                    xhr.open('GET', url);
+                    xhr.send();
+                    console.log(url)
+
+    	
+    $( `<img src="${url}" />" `).insertBefore( "#SideUserName" );
+    }).catch(function(error) {
+  
+    console.log(error)
+   
+  });
+
+
+}
+
 
 
 $(".pedidos").click(function(){
@@ -264,23 +296,15 @@ $(".settings").click(function(){
 
     $(".user-items").append( `                     
                             <div class="col-12">
-                            <form>
-                            <div class="form-group">
-                                <label for="cambiarNumero">Cambiar Número del restaurante</label>
-                                <input type="tel" class="form-control" id="cambiarNumero"  placeholder="Cambiar Número" name="cambiarNumero" >
-                        
-                            </div>
-                            <div class="form-group">
-                                <label for="cambiarDireccion">Password</label>
-                                <input type="text" class="form-control" id="cambiarNumero" placeholder="Dirección" name="cambiarNumero">
-                            </div>
+                            <form enctype="multipart/form-data">
+                      
 
                             <div class="form-group">
                             <label for="logo">Logo</label>
                             <input type="file" class="form-control" id="logo" placeholder="Ingresa tu Logo" name="logo">
                             </div>
 
-                            <button type="button" class="btn btn-primary">Cambiar</button>
+                            <button type="button" class="btn btn-primary"onClick="subirLogo()">Subir Logo</button>
                             </form>
                         </div>`)
                 
@@ -697,6 +721,7 @@ firebase.auth().onAuthStateChanged(user => {
 getUserData()
 .then(userData=>{
 $(".user-name").text(userData.name)
+   
   console.log(userData)
     $("#nombre-restaurante").append(userData.name)
     var nombreRestaurante=userData.name.replace(/\s/g, '')
@@ -712,7 +737,10 @@ $(".user-name").text(userData.name)
 
     </div>
 `
+
 )
+
+PlaceLogo()
 })
 .catch(error=>{
     console.error(error)
@@ -1217,4 +1245,32 @@ function EliminarPlatoCarta(){
     });
 
 
+}
+
+function subirLogo(){
+    var user = firebase.auth().currentUser;
+    var nombreRestaurante=user.displayName
+    // obtener la imagen 
+    var image= document.getElementById("logo").files[0]
+    // obtener nombre de la imagen 
+    var ImageName= image.name;
+    // dodne se va guardar en firebase 
+    var storageRef=firebase.storage().ref(`${nombreRestaurante}/logo.png`)
+    // subir la imagen al path seleccionado del storage
+
+    var uploadTask= storageRef.put(image);
+
+    uploadTask.on('state_changed',function(snapshot){
+        // Un observador del cambio de estado como el progereso, pausa y resume
+        // mirar el progreso de la tarea incluyendo el porcentaje de bits subido 
+        var progress = (snapshot.bytesTransferred/snapshot.totalBytes)*100
+        console.log(`La subida esta en ${progress}%`)
+
+    },function(error){
+        console.log(error)
+    },function(){
+        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL){
+            console.log(downloadURL)
+        })
+    })
 }

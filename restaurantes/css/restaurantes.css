@@ -59,11 +59,11 @@ font-size: smaller;
   }
 
 .avatar img {
-    width: 130px;
-    border-radius: 50%;
+    width: 150px;
+    
     overflow: hidden;
-    border: 4px solid #3665C1;
-    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.2);
+    
+    
 }
 
 .h4{
