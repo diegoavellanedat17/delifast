@@ -20,28 +20,39 @@
 
   
           <!-- navbar -->
-        <div class="container-fluid">
-          <div class="row bg-zaboo-custom " >
-            <div class="col-1" >
-              LOGO DELIFST
-            </div>
-            <div class="col-8" >
-              
-            </div>
-            <div class="col-2 mt-2 mb-2 mr-2" >
-              <div class="dropleft">
-                <button class="btn btn-secondary  circulo-usuario" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <span > </span> <i class="material-icons icon">account_circle</i>
-                </button>
-                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                 <p class="user-name"></p> 
-                 <a class="dropdown-item logout" href="#"><i class="material-icons icon">exit_to_app</i>Logout</a>
-                 <a class="dropdown-item settings" href="#"><i class="material-icons icon ">settings</i>Settings</a>
-                </div>
-              </div>
-            </div>
-          </div>
+<!-- navbar -->
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-zaboo-custom ">
+  <button class="navbar-toggler"id="menu-toggle" type="button">
+      <span ><i class="material-icons icon">arrow_forward</i></span>
+  </button>
+  
+  <a class="navbar-brand ml-3" href="#">
+      <!-- <img class="logo"src="./images/zaboo-logo_2.svg" width="120" height="40" alt=""> -->
+  </a>
+  
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item dropdown">
+
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="user-name"> </span> <i class="material-icons icon">account_circle</i>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item logout" href="#"><i class="material-icons icon">exit_to_app</i>Logout</a>
+          <a class="dropdown-item settings" href="#"><i class="material-icons icon ">settings</i>Settings</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item assistance" href="#" data-toggle="modal" data-target="#assistanceModal"><i class="material-icons icon">email</i>Inmediate assistance</a>
         </div>
+      </li>
+
+    </ul>
+
+  </div>
+</nav>
 
         <div class="d-flex" id="wrapper">
         
@@ -51,7 +62,7 @@
               <header class="avatar">
               <div class="image-avatar mt-5"></div>
               <!-- <img src="https://api.adorable.io/avatars/187/asis@adorable.io.png" /> -->
-              <h2 class="font-weight-bold h4 mt-3 user-name" id="SideUserName">Usuario</h2>
+              <h2 class="font-weight-bold h4 mt-3 user-name" id="SideUserName"></h2>
               </header>
             </div>
             <div class="list-group list-group-flush ">
@@ -64,12 +75,12 @@
           <!-- /#sidebar-wrapper -->
           <!-- #Container-->
                
-          <div class="container mt-2 mb-5">
-              <div class="row user-items">
+          <div class="container-fluid mt-5">
+              <div class="row user-items container mt-3">
                   <div class="table-responsive">
                       <table class="table table-hover table table-bordered">
-                      <thead class="TablaPedidosHeader">
-                      <tr>
+                      <thead class="thead-dark">
+                      <tr class="TablaPedidosHeader">
                       <th scope="col">Fecha</th>
                       <th scope="col">Pedido</th>
                       <th scope="col">Notas</th>
@@ -97,6 +108,14 @@
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
     <script src="./js/clientes.js"></script>
+    
+    <script>
+      $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+      });
+      
+    </script>
     
 
     
