@@ -63,6 +63,7 @@
                     </header>
                 </div>
                 <div class="list-group list-group-flush ">
+                  <a href="#" class="list-group-item list-group-item-action bg-transparent text-white qrcode" ><i class="material-icons icon">qr_code</i> Mi página</a>
                     <a href="#" class="list-group-item list-group-item-action bg-transparent text-white pedidos "><i class="material-icons icon">food_bank</i> Pedidos</a>
                     <a href="#" class="list-group-item list-group-item-action bg-transparent text-white clients"><i class="material-icons icon">group</i> Clientes</a>
                     <a href="#" class="list-group-item list-group-item-action bg-transparent text-white menu"><i class="material-icons icon">menu_book</i>  Ménu</a>
@@ -76,7 +77,7 @@
                 <!-- #Container-->
                 <div class="container-fluid mt-5 ">
 
-
+                    
                     <div class="row user-items container mt-3 " >
 
                     </div>
@@ -438,17 +439,18 @@
 
         <!-- Modal Modificar producto Carta-->
 
-
-        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.6.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.3.4/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
     <script src="./js/restaurantes.js"></script>
-
+    
     <script>
         $("#menu-toggle").click(function(e) {
           e.preventDefault();

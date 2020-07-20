@@ -261,6 +261,7 @@ document.getElementById("button_pedir").addEventListener("click", function(){
                     $(".modalToHide").css("display","block")
                     $(".modal-body-pedido").css("display","block")
                     $(".btn-group").css("display","block")
+                    $(".fieldTotal").remove()
                     $(".atrasBoton").remove()
                     $(".enviarOrden").remove()
                     $(".almuerzoDia").empty()
@@ -652,6 +653,7 @@ function GuardarInformacionCliente(name,email,password,dir,tel,userUid) {
 
 
 function HacerPedido(){
+    var total_platos_carta=0
     // Aqui se mostrará el resumen de lo que se piensa pedir
     var categorias = $(".clase-categoria").map(function() { return this.id;});
 
@@ -784,7 +786,7 @@ function HacerPedido(){
         console.log(PlatosCartaPrecios)
         // Total de platos de la carta 
       
-        var total_platos_carta = PlatosCartaPrecios.reduce((a, b) => a + b, 0)
+        total_platos_carta = PlatosCartaPrecios.reduce((a, b) => a + b, 0)
           
         $(".bodyTablaHacerPedidoCarta").append(`  
         <tr >
@@ -797,7 +799,8 @@ function HacerPedido(){
 
     const precio_menus=precio*numero_almuerzos
     const granTotal=precio_menus+total_platos_carta
-    $( `<p class="totalPagar">Total</p> <small class="GranTotal">${granTotal}</small>`).insertAfter( ".TablaHacerPedidoCarta" );
+    console.log(granTotal)
+    $( `<div class="fieldTotal"><p class="totalPagar">Total</p> <small class="GranTotal">${granTotal}</small></div>`).insertAfter( ".ModalHacerPedido" );
 
     var notas=document.forms["PedidoForm"][`notas`].value
     if(notas!=""){
@@ -811,6 +814,7 @@ function HacerPedido(){
 }
 
 function Atras(){
+    $(".fieldTotal").remove()
     $(".modalToHide").css("display","block")
     $(".modal-body-pedido").css("display","block")
     $(".adicionarMenu").css("display","block")

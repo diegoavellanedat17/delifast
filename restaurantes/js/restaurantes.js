@@ -54,7 +54,18 @@ function PlaceLogo(){
                     console.log(url)
 
     	
-    $( `<img src="${url}" />" `).insertBefore( "#SideUserName" );
+    $( `<img id="logoImage" src="${url}" />" `).insertBefore( "#SideUserName" );
+    // habilitar cors
+
+
+   
+
+    //var doc = new jsPDF()
+
+    //doc.text('Hello world!', 10, 10)
+    //doc.addImage(Imagebase64, 'JPEG', 15, 40, 180, 160)
+    //doc.save('a4.pdf')
+
     }).catch(function(error) {
   
     console.log(error)
@@ -301,7 +312,7 @@ $(".settings").click(function(){
 
                             <div class="form-group">
                             <label for="logo">Logo</label>
-                            <input type="file" class="form-control" id="logo" placeholder="Ingresa tu Logo" name="logo">
+                                <input type="file" class="form-control" id="logo" placeholder="Ingresa tu Logo" name="logo" accept ="image/*">
                             </div>
 
                             <button type="button" class="btn btn-primary"onClick="subirLogo()">Subir Logo</button>
@@ -423,6 +434,108 @@ $(".clients").click(function(){
 
 });
 
+$(".qrcode").click(function(){
+    console.log("mi página")
+        // para ya no escuchar las consultas de menu en tiempo real y no
+    //consumir tanto ancho de banda
+    if(entra_consulta!=0){
+        consulta_menu()
+    }
+
+    if(entra_pedidos!=0){
+        consulta_pedidos()
+    }
+
+    if(entra_carta!=0){
+        consulta_carta()
+    }
+    $(".user-items").css("background-color","white")
+    $(".user-items").empty()
+    $(".menuDia").empty()
+    getUserData()
+    .then(userData=>{
+  
+        var nombreRestaurante=userData.name.replace(/\s/g, '')
+        nombreRestaurante=nombreRestaurante.toLowerCase()
+        console.log(nombreRestaurante)
+
+        $(".user-items").append(`
+        <div><p class="miLink">https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}</p></div>
+        <div id="qrcode" class="col-12 mb-5"></div>
+        <button type="button" class="btn btn-primary col-12 mt-3" onclick="DescargarPDF()" >Descargar QR</button>
+        
+    `
+    )
+    var qrcode= new QRCode(document.getElementById("qrcode"), `https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}`);
+        console.log(qrcode)
+        var QRBdom = $($("#qrcode").find('img')[0])
+        //var Base64URL=scrQRBase.getAttribute("src");
+        var srcDOM = QRBdom.attr("id","imagenQR")
+        console.log(srcDOM)
+
+    })
+
+
+})
+
+// convertir a BAse64 la imagen para poner en PDF
+var convertImgToDataURLviaCanvas = function(url, callback) {
+  var img = new Image();
+
+  img.crossOrigin = 'Anonymous';
+
+  img.onload = function() {
+    var canvas = document.createElement('CANVAS');
+    var ctx = canvas.getContext('2d');
+    var dataURL;
+    canvas.height = this.height;
+    canvas.width = this.width;
+    ctx.drawImage(this, 0, 0);
+    dataURL = canvas.toDataURL();
+    callback(dataURL);
+    canvas = null;
+  };
+
+  img.src = url;
+}
+// verificar si hay una imagen 
+
+//descargar PDF
+function DescargarPDF(){
+    var src=$("#imagenQR").attr("src")
+    if($('#logoImage').length){
+       
+        var Logosrc=$("#logoImage").attr("src")
+
+    convertImgToDataURLviaCanvas( Logosrc, function( base64_data ) {
+
+        console.log( base64_data );
+        var doc = new jsPDF()
+
+        doc.setFont('Yellowtail')
+        doc.text('Código QR mi restaurante !', 10, 10)
+        doc.addImage(src, 'JPEG', 50,50, 100, 100)
+        doc.addImage(base64_data, 'JPEG', 80, 20, 40, 20)
+        doc.save('a4.pdf')
+        
+    } );
+
+    }
+    else{
+    
+        var doc = new jsPDF()
+
+        doc.setFont('Yellowtail')
+        doc.text('Código QR mi restaurante !', 10, 10)
+        doc.addImage(src, 'JPEG', 50,50, 100, 100)
+
+        doc.save('a4.pdf')
+        
+    }
+    
+
+
+}
 
 $(".logout").click(function(){
     firebase.auth().signOut()
@@ -703,6 +816,9 @@ function EliminarPlato(){
               text:"Producto Eliminado ",
               icon:"success"
           
+          }).then(()=>{
+            $("#modal-modificar-producto").modal('toggle');
+            console.log("cerrar modal")
           })
 
     }).catch(function(error) {
@@ -736,9 +852,15 @@ $(".user-name").text(userData.name)
     <p class="mb-0" id="link">https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}</p>
 
     </div>
+
+
 `
 
+
+
+
 )
+
 
 PlaceLogo()
 })
@@ -795,6 +917,8 @@ function ModificarPlato(categoria,semana,nombre,ref_id,estado,descripcion){
               text:"Producto Actualizado ",
               icon:"success"
           
+          }).then(function(){
+            $('#modal-modificar-producto').modal("toggle");
           })
     })
     .catch(function(error) {
@@ -1108,9 +1232,14 @@ function ValidarFormularioProductoCarta(){
         alert("Debes agregar el nombre de algún plato")
     }
 
-    var user = firebase.auth().currentUser;
+    else{
+
+        var user = firebase.auth().currentUser;
   
-    CrearNuevoPlatoCarta(categoria,Precio,NombrePlato,user.uid,Descripcion)
+        CrearNuevoPlatoCarta(categoria,Precio,NombrePlato,user.uid,Descripcion)
+    }
+
+
 }
 
 function CrearNuevoPlatoCarta(categoria,Precio,nombre,uid,descripcion){
@@ -1252,25 +1381,33 @@ function subirLogo(){
     var nombreRestaurante=user.displayName
     // obtener la imagen 
     var image= document.getElementById("logo").files[0]
-    // obtener nombre de la imagen 
-    var ImageName= image.name;
-    // dodne se va guardar en firebase 
-    var storageRef=firebase.storage().ref(`${nombreRestaurante}/logo.png`)
-    // subir la imagen al path seleccionado del storage
 
-    var uploadTask= storageRef.put(image);
+    // verificar el tipo de archivo 
+    if(image.type=="image/png" || image.type=="image/jpg" || image.type=="image/jpeg"){
 
-    uploadTask.on('state_changed',function(snapshot){
-        // Un observador del cambio de estado como el progereso, pausa y resume
-        // mirar el progreso de la tarea incluyendo el porcentaje de bits subido 
-        var progress = (snapshot.bytesTransferred/snapshot.totalBytes)*100
-        console.log(`La subida esta en ${progress}%`)
+        // obtener nombre de la imagen 
+        var ImageName= image.name;
+        // dodne se va guardar en firebase 
+        var storageRef=firebase.storage().ref(`${nombreRestaurante}/logo.png`)
+        // subir la imagen al path seleccionado del storage
 
-    },function(error){
-        console.log(error)
-    },function(){
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL){
-            console.log(downloadURL)
+        var uploadTask= storageRef.put(image);
+
+        uploadTask.on('state_changed',function(snapshot){
+            // Un observador del cambio de estado como el progereso, pausa y resume
+            // mirar el progreso de la tarea incluyendo el porcentaje de bits subido 
+            var progress = (snapshot.bytesTransferred/snapshot.totalBytes)*100
+            console.log(`La subida esta en ${progress}%`)
+
+        },function(error){
+            console.log(error)
+        },function(){
+            uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL){
+                console.log(downloadURL)
+            })
         })
-    })
+    }
+    else{
+        alert("Ingresa un formato válido para la imagen ")
+    }
 }
