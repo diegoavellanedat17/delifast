@@ -12,42 +12,71 @@ var firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
+
 firebase.auth().onAuthStateChanged(user => {
     if(user) {
         var user = firebase.auth().currentUser;
-        consulta_pedidos=db.collection('pedidos').where("uid_cliente","==",user.uid)
-        consulta_pedidos.orderBy("hora_pedido", "desc").get() // fue necesario habilitar un índice compuesto en firebase para que este query funcione
-        .then(function(querySnapshot) {
+        
+        consulta_pedidos=db.collection('pedidos').where("uid_cliente","==",user.uid).orderBy("hora_pedido", "desc")
+        .onSnapshot(function(querySnapshot) {
             querySnapshot.forEach(function(doc){
                 var fecha = new Date(doc.data().hora_pedido).toLocaleString("es-CO")
                 var entrada = doc.data().Entradas
                 var principio = doc.data().Principio
                 var platofuerte = doc.data().PlatoFuerte
                 var bebida = doc.data().Bebidas
+                var carta=doc.data().carta
                 var notas = doc.data().notas
                 var estado = doc.data().estado
                 const len = platofuerte.length
                 
-                var i = 0;
-                var rs = `
-                    <tr>
-                    <th rowspan="${len}" scope="rowgroup">${fecha}</th>`;
-                var rowtext = `
-                    <td>${entrada[i]}</td>
-                    <td>${principio[i]}</td>
-                    <td>${platofuerte[i]}</td>
-                    <td>${bebida[i]}</td>
-                    <td>${notas}</td>
-                    <td>${estado}</td>
-                    </tr>`;
-                var tr = `
-                    <tr>`
                 
-                for(; i < len; i++){ 
-                    if (i==0) {
-                        $(".TablaPedidosBody").append(rs.concat(rowtext))
-                    } else {
-                        $(".TablaPedidosBody").append(tr.concat(rowtext))
+                function TableDisplay(i, len){
+                    var pedido ={};
+                    
+                    pedido['rs1'] = `
+                        <tr>
+                        <th rowspan="${len}" scope="rowgroup">${fecha}</th>`;
+                    pedido['menutext'] = `
+                        <td>Menu ${[i+1]}: ${entrada[i]}, ${principio[i]}, ${platofuerte[i]}, ${bebida[i]}</td>`;
+                    pedido['cartatext'] =`
+                        <td>Plato a la carta: ${carta}</td>`; 
+                    pedido['rs2'] = `
+                        <th rowspan="${len}" scope="rowgroup">${notas}</th>
+                        <th rowspan="${len}" scope="rowgroup">${estado}</th>`;
+                    pedido['tr1'] = `
+                        <tr>`; 
+                    pedido['tr2'] =`
+                        </tr>`;
+
+                    return pedido
+                }
+
+                if (carta == "") {
+                    for(i = 0 ; i < len; i++){ 
+                        pedido = TableDisplay(i, len);
+                        if (i==0) {
+                            $(".TablaPedidosBody").append(pedido['rs1'].concat(pedido['menutext'], pedido['rs2'], pedido['tr2']))
+                        } else {   
+                            $(".TablaPedidosBody").append(pedido['tr1'].concat(pedido['menutext'], pedido['tr2']))
+                        }
+                    }  
+                } else if (platofuerte == ""){
+                    pedido = TableDisplay(0, 1);
+                    $(".TablaPedidosBody").append(pedido['rs1'].concat(pedido['cartatext'], pedido['rs2'], pedido['tr2']))
+                } else if (len == 1 && carta != "") {
+                    pedido = TableDisplay(0, 2);
+                    $(".TablaPedidosBody").append(pedido['rs1'].concat(pedido['menutext'], pedido['rs2'], pedido['tr2'], pedido['tr1'], pedido['cartatext'], pedido['tr2']))    
+                } else {
+                    for(i = 0 ; i < len; i++){ 
+                        pedido = TableDisplay(i, len+1);
+                        if (i==0) {
+                            $(".TablaPedidosBody").append(pedido['rs1'].concat(pedido['menutext'], pedido['rs2'], pedido['tr2']))
+                        } else if (i==len-1) {
+                            $(".TablaPedidosBody").append(pedido['tr1'].concat(pedido['menutext'], pedido['tr2'], pedido['tr1'], pedido['cartatext'], pedido['tr2']))
+                        } else {   
+                            $(".TablaPedidosBody").append(pedido['tr1'].concat(pedido['menutext'], pedido['tr2']))
+                        }
                     }
                 }                               
             })
