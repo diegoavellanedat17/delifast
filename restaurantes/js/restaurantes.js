@@ -844,21 +844,28 @@ $(".user-name").text(userData.name)
     nombreRestaurante=nombreRestaurante.toLowerCase()
     console.log(nombreRestaurante)
 
-    $(".user-items").append(`  
-    <div class=" alert alert-success mt-5 col-12 mr-3 ml-3" role="alert" >
-    <h4 class="alert-heading">Hola Restaurante ${userData.name}!</h4>
-    <p> Envía el sigueinte link a tus usuarios para que puedan hacer sus pedidos  </p>
-    <hr>
-    <p class="mb-0" id="link">https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}</p>
+    $(".user-items").append(` 
+    <div class="col-12 col-md-6">
+
+        <div class="card mb-3 mt-3 ">
+            <img class="card-img-top" src="./assets/img/portada.jpg" alt="Card image cap">
+            <div class="card-body">
+                <div class="row d-flex align-items-center">
+                <i class="material-icons icon-store col-3 col-md-2" >storefront</i>
+                <h5 class="card-title col-9 ml-md-3 " >${userData.name}</h5>
+                <p class="card-text col-10" ><small class="text-muted small-link">https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}</small></p>
+                
+                <i class="material-icons icon justify-content-end col-1 mr-1" style="font-size:18px">content_copy</i>
+                
+                </div>
+                
+            </div>
+
+        </div>
 
     </div>
 
-
 `
-
-
-
-
 )
 
 

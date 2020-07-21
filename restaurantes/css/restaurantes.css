@@ -1,3 +1,7 @@
+.background-body-container{
+  background-color: #EFEEEE;
+}
+
 .bg-zaboo-custom{
     background: linear-gradient(15deg,#e96743,#D16647 );
     opacity: 1;
@@ -52,6 +56,12 @@ font-size: smaller;
     opacity: 1;
 }
 
+.icon-store{
+  font-size: 65px;
+ color: #cccccc;
+ 
+}
+
 .avatar {
     background: rgba(0, 0, 0, 0.01);
     padding: 2em 0.5em;
@@ -61,9 +71,11 @@ font-size: smaller;
 .avatar img {
     width: 150px;
     
-    overflow: hidden;
-    
-    
+    overflow: hidden; 
+}
+
+.small-link{
+  font-size: 9px;;
 }
 
 .h4{
