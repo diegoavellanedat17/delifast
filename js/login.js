@@ -41,10 +41,11 @@ function crearUsuario(event){
     const name = formulario['name'].value;
     const person= formulario['persona'].value;
     const nit = formulario['nit'].value;
-    const tel = formulario['telefono'].value;
+	const tel = formulario['telefono'].value;
+	const dir = formulario['dir'].value;
     
 	// se verifica si no lleno algun campo 
-	if (!email || !name || !password || !person || !tel || !nit ){
+	if (!email || !name || !password || !person || !tel || !nit || !dir){
 		console.log('Deben llenarse todos los campos')
 
 		swal({
@@ -72,7 +73,7 @@ function crearUsuario(event){
 			
 			user.sendEmailVerification().then(function() {
 				console.log("Enviando correo de Verificacion")
-				GuardarInformacionRestaurante(name,email,password,person,nit,tel,user.uid)
+				GuardarInformacionRestaurante(name,email,password,person,nit,tel,user.uid,dir)
 				// Email sent.
 
 				swal({
@@ -174,7 +175,7 @@ firebase.auth().onAuthStateChanged(user => {
   }
 });
 
-function GuardarInformacionRestaurante(name,email,password,person,nit,tel,userUid) {
+function GuardarInformacionRestaurante(name,email,password,person,nit,tel,userUid,dir) {
 
 // Add a new document in collection "cities"
 	var nombre=name.replace(/\s/g, '')
@@ -182,7 +183,8 @@ function GuardarInformacionRestaurante(name,email,password,person,nit,tel,userUi
 	console.log('Enviando a base de datos')
     database.collection("restaurantes").doc().set({
 		nombre:name,
-        nombreRestaurante: nombre,
+		nombreRestaurante: nombre,
+		dir:dir,
         email: email,
         password: password,
         representante: person,

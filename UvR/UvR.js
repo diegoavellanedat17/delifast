@@ -30,7 +30,7 @@ return new Promise((resolve,reject)=>{
 }
 
 function RedirijirUsuario(userData){
-    var consulta_restaurantes=db.collection('restaurantes').where("email","==",userData.email)
+    var consulta_restaurantes=db.collection('restaurantes').where("uid","==",userData.uid)
     consulta_restaurantes.get()
     .then(function(querySnapshot){
         if(querySnapshot.empty){

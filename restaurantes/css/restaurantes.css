@@ -11,6 +11,16 @@
     background: linear-gradient(15deg,#D16647,#e96743 );
     opacity: 1;
 }
+small{
+ 
+  font-family: 'Spartan', sans-serif;
+}
+
+#clientes-activos{
+  font-size: 90px;
+  font-family: 'Spartan', sans-serif;
+  color:#CE571B;
+}
 
 .item_product{
   cursor: pointer;
@@ -193,3 +203,25 @@ hr.style3 {
     }
 
   }
+
+
+  
+.btn-label {
+  position: relative;
+  left: -12px;
+  display: inline-block;
+  background: rgba(0,0,0,0.15);
+  border-radius: 3px 0 0 3px;
+  border:transparent;
+  color: white;
+}
+.btn-labeled {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.btn { 
+  margin-bottom:10px; 
+
+}
+
+  
