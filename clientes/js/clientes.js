@@ -28,17 +28,27 @@ firebase.auth().onAuthStateChanged(user => {
                 var carta=doc.data().carta
                 var notas = doc.data().notas
                 var estado = doc.data().estado
-                const len = platofuerte.length
-                
+                var menu = [entrada, principio, platofuerte, bebida]
+                var len
+
+                if (platofuerte != undefined){
+                    len = platofuerte.length
+                } else if (entrada != undefined){
+                    len = entrada.length
+                } else if (principio != undefined){
+                    len = principio.length
+                } else {
+                    len = bebida.length
+                }
+                            
                 
                 function TableDisplay(i, len){
                     var pedido ={};
-                    
+                    var menuaux = [];
+
                     pedido['rs1'] = `
                         <tr>
                         <th rowspan="${len}" scope="rowgroup">${fecha}</th>`;
-                    pedido['menutext'] = `
-                        <td>Menu ${[i+1]}: ${entrada[i]}, ${principio[i]}, ${platofuerte[i]}, ${bebida[i]}</td>`;
                     pedido['cartatext'] =`
                         <td>Plato a la carta: ${carta}</td>`; 
                     pedido['rs2'] = `
@@ -48,11 +58,23 @@ firebase.auth().onAuthStateChanged(user => {
                         <tr>`; 
                     pedido['tr2'] =`
                         </tr>`;
-
+                    
+                    for (j =0 ; j < menu.length; j++){
+                        if (menu[j] != undefined && menu[j].length != 0){
+                        
+                        menuaux.push(menu[j][i])
+                        
+                        pedido['menutext'] = `
+                            <td>Menu ${[i+1]}: ${menuaux}</td>`;
+                        
+                        
+                        console.log(menuaux)
+                        }
+                    }
                     return pedido
                 }
 
-                if (carta == "") {
+                if (carta == "" || carta == undefined) {
                     for(i = 0 ; i < len; i++){ 
                         pedido = TableDisplay(i, len);
                         if (i==0) {
@@ -81,7 +103,7 @@ firebase.auth().onAuthStateChanged(user => {
                 }                               
             })
         })
-    $(".icon").css("color","green")
+    $(".icon").css("color","white")
     $(".user-name").append(user.displayName)
   
     }
