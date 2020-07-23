@@ -12,8 +12,6 @@
     opacity: 1;
 }
 
-
-
 .logo{
     opacity: 1;
 }
@@ -41,7 +39,7 @@
 }
 body {
     overflow-x: hidden;
-    background-color: #333333;
+    background-color: #F2F2F2;
  
   }
 
@@ -259,6 +257,41 @@ input{
   height: 50px;
 }
 
+header {
+  overflow: hidden;
+  position: relative;
+  text-align: center;
+}
+header img {
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 51%;
+  transform: translate(-50%, -50%);
+  
+}
+
+.image{
+  /* background: url(../assets/img/logo.png) 50% 50% no-repeat;  */
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border:white 3px solid;
+  
+}
 
 
+.pide-en{
+  font-size: smaller;
+  color: white;
+  font-family: 'Spartan', sans-serif;
+  font-weight: 300; 
+}
 
+.scroll-nav{
+  font-family: 'Spartan', sans-serif;
+}

@@ -32,7 +32,9 @@ function VerificarExistenciarestaurante(){
             alert("Ingresa un restaurante válido") 
         }
         else{
-            $(".user-items").css("background-color","#333333")
+
+
+        
             $("#button_pedir").css("display","block")
             $(".user-items").append(
                 `
@@ -47,7 +49,13 @@ function VerificarExistenciarestaurante(){
 
             querySnapshot.forEach(function(doc){
 
+                
+                var nombreRestaurante=doc.data().nombre
                 uid_restaurante=doc.data().uid
+
+                // Colocar el logo del restaurante si existe 
+                LocateLogo(nombreRestaurante)
+
                 var vista_menu=db.collection('menu').where("uid_restaurante","==",uid_restaurante)
                 vista_menu.get()
                 .then(function(querySnapshot){
@@ -63,6 +71,7 @@ function VerificarExistenciarestaurante(){
                             const estado= doc.data().estado
                             var categoriaFix = categoria.replace(/\s/g, '');
                             var dias= doc.data().dia
+        
                             
 
                         if(dias[dia_actual]===true && estado==='activo'){    
@@ -299,6 +308,7 @@ function AdicionarMenu(){
                                 <div class="form-group col-md-12 ${categorias[i]}${numero_almuerzos}">
                                     <label for="input${categorias[i]}">${categorias[i]} ${numero_almuerzos}</label>
                                     <select id="input${categorias[i]}" class="form-control ${categorias[i]}${numero_almuerzos}class" name="${categorias[i]}${numero_almuerzos}">
+                                        <option>Ninguna</option>
                                     </select>
                                 </div> `)
 
@@ -989,4 +999,46 @@ function cambiar_direccion(){
         // The document probably doesn't exist.
         console.error("Error updating document: ", error);
     });
+}
+
+function LocateLogo(nombreRest){
+
+    $(".header-portada").append(
+        `
+        <div class="centered ">
+            <div class="image shadow-lg">
+            </div>
+            <div class="mt-5 row">
+                <p class="pide-en col-12">Pide en ${nombreRest}</p>
+            </div>
+        </div>
+
+
+
+        `
+    )
+
+
+    var storageRef = firebase.storage().ref();
+
+    var LogoRef = storageRef.child(`${nombreRest}/logo.png`);
+    // Get the download URL
+    LogoRef.getDownloadURL()
+        .then(function(url) {
+        // Insert url into an <img> tag to "download"
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+            xhr.onload = function(event) {
+                var blob = xhr.response;
+            };
+            xhr.open('GET', url);
+            xhr.send();
+            console.log(url)
+            $(".image").css("background",`url(${url}) 50% 50% no-repeat`)
+            
+        })
+        .catch(function(error) {
+        console.log(error)
+        $(".image").css("background",`url(./assets/img/logo-default.JPG) 50% 50% no-repeat`)
+        });
 }
