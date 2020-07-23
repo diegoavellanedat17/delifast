@@ -16,9 +16,12 @@ var firebaseConfig = {
   entra_consulta=0;
   entra_pedidos=0;
   entra_carta=0;
-  // Verificar cual es el nombre del restaurante para pasarlo como parametro
 
-  function getUserData(){
+
+homePage()
+
+// Verificar cual es el nombre del restaurante para pasarlo como parametro
+function getUserData(){
     return new Promise((resolve,reject)=>{
         firebase.auth().onAuthStateChanged(user => {
             const userData={
@@ -33,53 +36,36 @@ var firebaseConfig = {
 }
 
 
-// mirar si existe el logo, si no seguir 
 function PlaceLogo(){
+    // Colocar el logo si no existe
+    if($("#logoImage").length ===0){
     var storageRef = firebase.storage().ref();
     var user = firebase.auth().currentUser;
-    
     var nombreRestaurante=user.displayName
     var LogoRef = storageRef.child(`${nombreRestaurante}/logo.png`);
-
     // Get the download URL
-    LogoRef.getDownloadURL().then(function(url) {
-    // Insert url into an <img> tag to "download"
-        var xhr = new XMLHttpRequest();
-                    xhr.responseType = 'blob';
-                    xhr.onload = function(event) {
-                    var blob = xhr.response;
-                    };
-                    xhr.open('GET', url);
-                    xhr.send();
-                    console.log(url)
-
-    	
-    $( `<img id="logoImage" src="${url}" />" `).insertBefore( "#SideUserName" );
-    // habilitar cors
-
-
-   
-
-    //var doc = new jsPDF()
-
-    //doc.text('Hello world!', 10, 10)
-    //doc.addImage(Imagebase64, 'JPEG', 15, 40, 180, 160)
-    //doc.save('a4.pdf')
-
-    }).catch(function(error) {
-  
-    console.log(error)
-   
-  });
-
-
+    LogoRef.getDownloadURL()
+        .then(function(url) {
+        // Insert url into an <img> tag to "download"
+            var xhr = new XMLHttpRequest();
+            xhr.responseType = 'blob';
+            xhr.onload = function(event) {
+                var blob = xhr.response;
+            };
+            xhr.open('GET', url);
+            xhr.send();
+            console.log(url)
+            $( `<img id="logoImage" src="${url}" />" `).insertBefore( "#SideUserName" );
+        })
+        .catch(function(error) {
+        console.log(error)
+        });
+    }
 }
-
-
 
 $(".pedidos").click(function(){
     entra_pedidos=1;
-    $(".user-items").css("background-color","white")
+    
     $(".user-items").empty()
     $(".menuDia").empty()
     
@@ -434,7 +420,7 @@ $(".clients").click(function(){
 
 });
 
-$(".qrcode").click(function(){
+$(".mi_pagina").click(function(){
     console.log("mi página")
         // para ya no escuchar las consultas de menu en tiempo real y no
     //consumir tanto ancho de banda
@@ -449,32 +435,10 @@ $(".qrcode").click(function(){
     if(entra_carta!=0){
         consulta_carta()
     }
-    $(".user-items").css("background-color","white")
+   
     $(".user-items").empty()
     $(".menuDia").empty()
-    getUserData()
-    .then(userData=>{
-  
-        var nombreRestaurante=userData.name.replace(/\s/g, '')
-        nombreRestaurante=nombreRestaurante.toLowerCase()
-        console.log(nombreRestaurante)
-
-        $(".user-items").append(`
-        <div><p class="miLink">https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}</p></div>
-        <div id="qrcode" class="col-12 mb-5"></div>
-        <button type="button" class="btn btn-primary col-12 mt-3" onclick="DescargarPDF()" >Descargar QR</button>
-        
-    `
-    )
-    var qrcode= new QRCode(document.getElementById("qrcode"), `https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}`);
-        console.log(qrcode)
-        var QRBdom = $($("#qrcode").find('img')[0])
-        //var Base64URL=scrQRBase.getAttribute("src");
-        var srcDOM = QRBdom.attr("id","imagenQR")
-        console.log(srcDOM)
-
-    })
-
+    homePage()
 
 })
 
@@ -833,43 +797,6 @@ firebase.auth().onAuthStateChanged(user => {
         window.location = '../login.html'; 
     }
 });
-
-getUserData()
-.then(userData=>{
-$(".user-name").text(userData.name)
-   
-  console.log(userData)
-    $("#nombre-restaurante").append(userData.name)
-    var nombreRestaurante=userData.name.replace(/\s/g, '')
-    nombreRestaurante=nombreRestaurante.toLowerCase()
-    console.log(nombreRestaurante)
-
-    $(".user-items").append(`  
-    <div class=" alert alert-success mt-5 col-12 mr-3 ml-3" role="alert" >
-    <h4 class="alert-heading">Hola Restaurante ${userData.name}!</h4>
-    <p> Envía el sigueinte link a tus usuarios para que puedan hacer sus pedidos  </p>
-    <hr>
-    <p class="mb-0" id="link">https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}</p>
-
-    </div>
-
-
-`
-
-
-
-
-)
-
-
-PlaceLogo()
-})
-.catch(error=>{
-    console.error(error)
-
-    //window.location = '../login/login.html'; //After successful login, user will be redirected to home.html
-
-})
 
 function CrearNuevoPlato(categoria,semana,nombre,uid,descripcion){
 
@@ -1410,4 +1337,158 @@ function subirLogo(){
     else{
         alert("Ingresa un formato válido para la imagen ")
     }
+}
+
+// Funcion que se activa apenas se abre el dashboard y cuando se da click en página
+
+function homePage(){
+    getUserData()
+    .then(userData=>{
+        $(".user-name").text(userData.name)
+        
+        console.log(userData)
+        $("#nombre-restaurante").append(userData.name)
+        var nombreRestaurante=userData.name.replace(/\s/g, '')
+        nombreRestaurante=nombreRestaurante.toLowerCase()
+        console.log(nombreRestaurante)
+    
+        // Hacer Query de restaurante para descargar la información básica 
+        var consulta_restaurantes=db.collection('restaurantes').where("uid","==",userData.uid)
+        consulta_restaurantes.get()
+        .then(function(querySnapshot){
+            if(querySnapshot.empty){
+                console.log("No es un restaurante debe salir")
+                firebase.auth().signOut()
+            }
+            else{
+                querySnapshot.forEach(function(doc){
+    
+                    const tel=doc.data().tel 
+                    const dir=doc.data().dir 
+                    const email=doc.data().email 
+                    const clientes=doc.data().clientes 
+                    console.log(clientes.length)
+                    $(".user-items").append(` 
+                    <div class="col-12  col-lg-6 d-inline-flex ">
+                
+                        <div class="card mb-3 mt-3 ">
+                            <img class="card-img-top" src="./assets/img/portada.jpg" alt="Card image cap">
+                            <div class="card-body">
+                                <div class="row d-flex align-items-center">
+                                <i class="material-icons icon-store col-3 col-md-2" >storefront</i>
+                                <h5 class="card-title col-9 ml-md-3 " >${userData.name}</h5>
+                                <p class="card-text col-10" ><small class="text-muted small-link">https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}</small></p>
+                                
+                                <i class="material-icons icon justify-content-end col-1 mr-1" style="font-size:18px; cursor: pointer;">content_copy</i>
+                                
+                                </div>
+                                
+                            </div>
+                
+                        </div>
+                
+                    </div>
+                
+                    <div class="col-12 col-md-6 col-lg-3 d-inline-flex">
+                
+                        <div class="card mb-3 mt-3 ">
+                            
+                            <div class="card-body ">
+                
+                                <h5 class="card-title col-12 col-md-12 d-flex justify-content-center" >Código  QR </h5>
+                                <div class="row">
+                                    <div id="qrcodeInicio" class="col-12 col-sm-6 col-md-12 d-flex justify-content-center"  ></div>
+                                    <div  class="col-12 col-sm-6 col-md-12 mt-3">
+                                        <small class=" text-justify text-muted">Los siguientes imprimibles te permiten ubicar los códigos en las mesas y puertas</small>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row d-flex flex-row-reverse">
+                            
+                                    <button type="button" class="btn btn-labeled  mt-3 d-flex align-items-center" onClick="DescargarPDF()" style="  background: #CE571B; color: white;">
+                                        <span class="btn-label"><i class="material-icons icon d-flex align-items-center">get_app</i></span>
+                                        <small>Descargar</small>
+                                    </button>
+                                </div>
+                      
+                            </div>
+                
+                        </div>
+                
+                    </div>
+                
+                    <div class="col-12 col-md-6 col-lg-3 d-inline-flex" >
+                
+                    <div class="card mb-3 mt-3 ">
+                        
+                        <div class="card-body">
+                
+                            <h6 class="card-title col-12  d-flex justify-content-center" >Información Básica</h6>
+                            <div class="row">
+                                <div  class="col-2 d-flex justify-content-center mb-2">
+                                    <i class="material-icons icon " style="color:#CE571B;">call</i>
+                                </div>
+                                <div  class="col-10 mb-2">
+                                    <small class=" text-justify text-muted">${tel} </small>
+                                </div>
+                
+                                <div  class="col-2 d-flex justify-content-center mb-2" >
+                                    <i class="material-icons icon " style="color:#CE571B;">home</i>
+                                </div>
+                                <div  class="col-10 mb-2">
+                                    <small class=" text-justify text-muted">${dir} </small>
+                                </div>
+                
+                                <div  class="col-2 d-flex justify-content-center mb-2" >
+                                    <i class="material-icons icon " style="color:#CE571B;">email</i>
+                                </div>
+                                <div  class="col-10 mb-2">
+                                    <small class=" text-justify text-muted"> ${email}</small>
+                                </div>
+                
+                                <div  class="col-4 d-flex justify-content-center mb-2 " >
+                                    <h1 id="clientes-activos" >${clientes.length}</h1>
+                                </div>
+                                <div  class="col-8 mb-2 d-flex align-items-center">
+                                    <small class=" text-justify text-muted"> Clientes Activos </small>
+                                </div>
+                
+                
+                
+                            </div>
+                            
+                            
+                        </div>
+                
+                    </div>
+                
+                </div>
+                
+                
+                
+                `
+                )
+    
+                var qrcode= new QRCode(document.getElementById("qrcodeInicio"), `https://diegoavellanedat17.github.io/delifast/menu/menu.html?restaurante=${nombreRestaurante}`);
+                console.log(qrcode)
+                var QRBdom = $($("#qrcodeInicio").find('img')[0])
+                var srcDOM = QRBdom.attr("id","imagenQR")
+                QRBdom.attr("height","100")
+                QRBdom.attr("width","100")
+                console.log(srcDOM)
+                
+                })
+    
+            }
+    
+        })
+    
+        PlaceLogo()
+    })
+    .catch(error=>{
+        console.error(error)
+    
+        //window.location = '../login/login.html'; //After successful login, user will be redirected to home.html
+    
+    })
 }
