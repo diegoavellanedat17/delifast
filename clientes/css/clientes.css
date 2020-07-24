@@ -61,6 +61,7 @@ body {
 
 .TablaPedidosBody, th, td {
   border: 1px solid #b3b3b3;
+  font-weight: normal;
 }
 
 /* tr:nth-child(even) {background-color: #f2f2f2;} */
